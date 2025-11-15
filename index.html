@@ -178,6 +178,25 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
+        .anthem-player {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .anthem-label {
+            color: #4a5568;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        #anthem-audio {
+            width: 100%;
+            height: 32px;
+            outline: none;
+        }
+
         .controls {
             position: absolute;
             top: 20px;
@@ -336,6 +355,12 @@
                 <div class="country-name" id="country-name"></div>
             </div>
             <div id="country-details"></div>
+            <div class="anthem-player" id="anthem-container" style="display: none;">
+                <div class="anthem-label">🎵 National Anthem</div>
+                <audio id="anthem-audio" controls preload="none">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
             <a href="#" target="_blank" class="learn-more-btn" id="wiki-link">Learn More on Wikipedia</a>
         </div>
     </div>
@@ -429,6 +454,65 @@
             "Timor-Leste": "East Timor"
         };
 
+        // Map country names to their anthem URLs
+        // Using a reliable source: National Anthems World
+        const anthemURLs = {
+            // Major countries with reliable anthem sources
+            "United States": "https://upload.wikimedia.org/wikipedia/commons/e/e6/United_States_National_Anthem.ogg",
+            "United Kingdom": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Instrumental_God_Save_the_King.ogg",
+            "Canada": "https://upload.wikimedia.org/wikipedia/commons/5/53/Canadian_national_anthem.ogg",
+            "France": "https://upload.wikimedia.org/wikipedia/commons/f/fd/La_Marseillaise.ogg",
+            "Germany": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Deutschlandlied_instrumental.ogg",
+            "Italy": "https://upload.wikimedia.org/wikipedia/commons/0/00/Inno_di_Mameli_instrumental.ogg",
+            "Spain": "https://upload.wikimedia.org/wikipedia/commons/9/92/Marcha_Real_-_Choirs_and_Military_Band_-_LoS.ogg",
+            "Japan": "https://upload.wikimedia.org/wikipedia/commons/6/68/Kimi_ga_Yo_instrumental.ogg",
+            "China": "https://upload.wikimedia.org/wikipedia/commons/f/fa/March_of_the_Volunteers_instrumental.ogg",
+            "Russia": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Anthem_of_Russia_instrumental.ogg",
+            "India": "https://upload.wikimedia.org/wikipedia/commons/9/94/Jana_Gana_Mana_instrumental.ogg",
+            "Brazil": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Hino_Nacional_Brasileiro_instrumental_-_Ministerio_da_Defesa.ogg",
+            "Mexico": "https://upload.wikimedia.org/wikipedia/commons/8/8c/United_Mexican_States_National_Anthem.ogg",
+            "Australia": "https://upload.wikimedia.org/wikipedia/commons/5/58/Advance_Australia_Fair_instrumental.ogg",
+            "South Korea": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Aegukga_instrumental.ogg",
+            "Argentina": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Argentine_National_Anthem_instrumental.ogg",
+            "South Africa": "https://upload.wikimedia.org/wikipedia/commons/1/19/South_African_national_anthem_instrumental.ogg",
+            "Egypt": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Bilady%2C_Bilady%2C_Bilady_instrumental.ogg",
+            "Turkey": "https://upload.wikimedia.org/wikipedia/commons/f/f6/%C4%B0stikl%C3%A2l_Mar%C5%9F%C4%B1_instrumental.ogg",
+            "Poland": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Mazurek_D%C4%85browskiego_instrumental.ogg",
+            "Netherlands": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Het_Wilhelmus_instrumental.ogg",
+            "Belgium": "https://upload.wikimedia.org/wikipedia/commons/7/77/La_Brabanc%CC%A7onne_instrumental.ogg",
+            "Sweden": "https://upload.wikimedia.org/wikipedia/commons/6/67/Du_gamla%2C_du_fria_instrumental.ogg",
+            "Norway": "https://upload.wikimedia.org/wikipedia/commons/4/45/Ja%2C_vi_elsker_dette_landet_instrumental.ogg",
+            "Greece": "https://upload.wikimedia.org/wikipedia/commons/0/09/National_Anthem_of_Greece_instrumental.ogg",
+            "Portugal": "https://upload.wikimedia.org/wikipedia/commons/f/fe/A_Portuguesa_instrumental.ogg",
+            "Ireland": "https://upload.wikimedia.org/wikipedia/commons/9/92/Amhr%C3%A1n_na_bhFiann_instrumental.ogg",
+            "Switzerland": "https://upload.wikimedia.org/wikipedia/commons/9/96/Swiss_Psalm_instrumental.ogg",
+            "Austria": "https://upload.wikimedia.org/wikipedia/commons/2/21/Austrian_National_Anthem.ogg",
+            "Denmark": "https://upload.wikimedia.org/wikipedia/commons/8/84/Der_er_et_yndigt_land_instrumental.ogg",
+            "Finland": "https://upload.wikimedia.org/wikipedia/commons/3/32/Maamme_instrumental.ogg",
+            "New Zealand": "https://upload.wikimedia.org/wikipedia/commons/e/ea/God_Defend_New_Zealand_instrumental.ogg",
+            "Israel": "https://upload.wikimedia.org/wikipedia/commons/2/26/Hatikvah_instrumental.ogg",
+            "Thailand": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Thai_National_Anthem_-_US_Navy_Band.ogg",
+            "Philippines": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Lupang_Hinirang_instrumental.ogg",
+            "Singapore": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Majulah_Singapura_instrumental.ogg",
+            "Malaysia": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Negaraku_instrumental.ogg",
+            "Indonesia": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Indonesia_Raya_instrumental.ogg",
+            "Vietnam": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Ti%E1%BA%BFn_Qu%C3%A2n_Ca_instrumental.ogg",
+            "Pakistan": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Pak_sarzamin_shad_bad_instrumental.ogg",
+            "Bangladesh": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Amar_Sonar_Bangla_instrumental.ogg",
+            "Chile": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Himno_Nacional_de_Chile_instrumental.ogg",
+            "Colombia": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Himno_Nacional_de_la_Rep%C3%BAblica_de_Colombia_instrumental.ogg",
+            "Peru": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Himno_Nacional_del_Per%C3%BA_instrumental.ogg",
+            "Venezuela": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Venezuelan_National_Anthem.ogg",
+            "Ukraine": "https://upload.wikimedia.org/wikipedia/commons/7/75/Shche_ne_vmerla_Ukrainy_i_slava%2C_i_volia_instrumental.ogg",
+            "Czech Republic": "https://upload.wikimedia.org/wikipedia/commons/0/09/Kde_domov_m%C5%AFj_instrumental.ogg",
+            "Romania": "https://upload.wikimedia.org/wikipedia/commons/f/f7/De%C8%99teapt%C4%83-te%2C_rom%C3%A2ne%21_instrumental.ogg",
+            "Hungary": "https://upload.wikimedia.org/wikipedia/commons/7/76/Himnusz_instrumental.ogg",
+            "Serbia": "https://upload.wikimedia.org/wikipedia/commons/8/81/Bo%C5%BEe_pravde_instrumental.ogg",
+            "Croatia": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Lijepa_na%C5%A1a_domovino_instrumental.ogg",
+            "Bulgaria": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Mila_Rodino_instrumental.ogg",
+            "Slovakia": "https://upload.wikimedia.org/wikipedia/commons/2/20/Nad_Tatrou_sa_bl%C3%BDska_instrumental.ogg"
+        };
+
         // Fetch country data from REST Countries API
         async function fetchCountryData(countryName) {
             // Check cache first
@@ -452,7 +536,8 @@
                     flag: country.flags.svg || country.flags.png,
                     population: country.population.toLocaleString(),
                     capital: country.capital ? country.capital[0] : "N/A",
-                    wikiLink: `https://en.wikipedia.org/wiki/${encodeURIComponent(country.name.common)}`
+                    wikiLink: `https://en.wikipedia.org/wiki/${encodeURIComponent(country.name.common)}`,
+                    anthem: anthemURLs[country.name.common] || null
                 };
 
                 countryDataCache[countryName] = countryInfo;
@@ -464,7 +549,8 @@
                     flag: '',
                     population: "Data unavailable",
                     capital: "Data unavailable",
-                    wikiLink: `https://en.wikipedia.org/wiki/${encodeURIComponent(countryName)}`
+                    wikiLink: `https://en.wikipedia.org/wiki/${encodeURIComponent(countryName)}`,
+                    anthem: null
                 };
             }
         }
@@ -491,6 +577,18 @@
             `;
             document.getElementById('country-details').innerHTML = detailsHTML;
             document.getElementById('wiki-link').href = countryData.wikiLink;
+
+            // Handle anthem player
+            const anthemContainer = document.getElementById('anthem-container');
+            const anthemAudio = document.getElementById('anthem-audio');
+            
+            if (countryData.anthem) {
+                anthemAudio.src = countryData.anthem;
+                anthemContainer.style.display = 'block';
+            } else {
+                anthemAudio.src = '';
+                anthemContainer.style.display = 'none';
+            }
 
             // Position the card
             const containerRect = mapContainer.getBoundingClientRect();
@@ -528,6 +626,13 @@
         function hideInfoCard() {
             const card = document.getElementById('info-card');
             card.classList.remove('visible');
+            
+            // Stop anthem playback when hiding card
+            const anthemAudio = document.getElementById('anthem-audio');
+            if (anthemAudio) {
+                anthemAudio.pause();
+                anthemAudio.currentTime = 0;
+            }
             
             if (activeCountry) {
                 d3.select(activeCountry).classed('active', false);
