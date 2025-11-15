@@ -57,8 +57,12 @@
             height: 100%;
         }
 
+        .ocean {
+            fill: #cce7ff;
+        }
+
         .country {
-            fill: none;
+            fill: #ffffff;
             stroke: #4a5568;
             stroke-width: 0.5;
             cursor: pointer;
@@ -66,15 +70,13 @@
         }
 
         .country:hover {
-            fill: #667eea;
-            fill-opacity: 0.6;
+            fill: #764ba2;
             stroke: #2d3748;
             stroke-width: 1;
         }
 
         .country.active {
-            fill: #667eea;
-            fill-opacity: 0.7;
+            fill: #764ba2;
             stroke: #2d3748;
             stroke-width: 1.5;
         }
@@ -355,6 +357,14 @@
             .append("svg")
             .attr("viewBox", `0 0 ${width} ${height}`)
             .attr("preserveAspectRatio", "xMidYMid meet");
+
+        // Blue ocean background
+        svg.append("rect")
+            .attr("class", "ocean")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("height", height);
 
         const g = svg.append("g");
 
