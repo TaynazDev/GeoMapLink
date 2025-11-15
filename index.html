@@ -333,7 +333,7 @@
 <body>
     <header>
         <h1>🌍 GeoMapLink</h1>
-        <p class="subtitle">Explore the world - Hover or click any country to learn more</p>
+        <p class="subtitle">Explore the world - Click any country to learn more</p>
     </header>
 
     <div id="map-container">
@@ -645,8 +645,8 @@
             const countryName = d.properties.name;
             const countryElement = event.currentTarget;
 
-            // If clicking the same country on mobile, hide it
-            if (isMobile && activeCountry === countryElement) {
+            // If clicking the same country, hide it
+            if (activeCountry === countryElement) {
                 hideInfoCard();
                 return;
             }
@@ -692,28 +692,11 @@
                     .on("click", function(event, d) {
                         event.stopPropagation();
                         handleCountryInteraction(event, d);
-                    })
-                    .on("mouseenter", function(event, d) {
-                        if (!isMobile) {
-                            handleCountryInteraction(event, d);
-                        }
-                    })
-                    .on("mouseleave", function(event, d) {
-                        if (!isMobile) {
-                            // Add small delay before hiding on desktop
-                            setTimeout(() => {
-                                if (!isMobile) {
-                                    hideInfoCard();
-                                }
-                            }, 100);
-                        }
                     });
 
-                // Click outside to close on mobile
+                // Click outside to close
                 svg.on("click", () => {
-                    if (isMobile) {
-                        hideInfoCard();
-                    }
+                    hideInfoCard();
                 });
 
             } catch (error) {
