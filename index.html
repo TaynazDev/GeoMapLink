@@ -447,22 +447,42 @@
         const zoom = d3.zoom()
             .scaleExtent([1, 8])
             .filter(function(event) {
-                // Allow zoom and horizontal pan only
+                // Allow all interactions
                 return !event.button && event.type !== 'dblclick';
             })
             .on("zoom", (event) => {
                 currentTransform = event.transform;
                 currentZoom = event.transform.k;
                 
-                // Lock vertical panning - only allow horizontal movement
-                const lockedTransform = d3.zoomIdentity
-                    .translate(event.transform.x, 0)
+                // Allow vertical panning when zoomed in, constrain to map bounds
+                let finalY = event.transform.y;
+                
+                // When zoomed in, allow vertical movement but constrain
+                if (currentZoom > 1) {
+                    // Calculate the visible height and scaled map height
+                    const scaledHeight = height * currentZoom;
+                    const visibleHeight = height;
+                    
+                    // Maximum Y offset (can't pan above the top)
+                    const maxY = 0;
+                    // Minimum Y offset (can't pan below Antarctica)
+                    const minY = -(scaledHeight - visibleHeight);
+                    
+                    // Constrain Y within bounds
+                    finalY = Math.max(minY, Math.min(maxY, finalY));
+                } else {
+                    // At zoom level 1, lock Y to 0
+                    finalY = 0;
+                }
+                
+                // Apply constrained transform
+                const constrainedTransform = d3.zoomIdentity
+                    .translate(event.transform.x, finalY)
                     .scale(currentZoom);
                 
-                // Apply transform
-                g.attr("transform", lockedTransform);
+                g.attr("transform", constrainedTransform);
                 
-                // Check if we've scrolled too far and need to wrap
+                // Check if we've scrolled too far horizontally and need to wrap
                 if (actualMapWidth > 0) {
                     const scaledMapWidth = actualMapWidth * currentZoom;
                     const threshold = scaledMapWidth * 0.8; // Wrap before fully off-screen
@@ -471,7 +491,7 @@
                     if (event.transform.x < -threshold) {
                         const newX = event.transform.x + scaledMapWidth;
                         const newTransform = d3.zoomIdentity
-                            .translate(newX, event.transform.y)
+                            .translate(newX, finalY)
                             .scale(currentZoom);
                         svg.call(zoom.transform, newTransform);
                         return;
@@ -481,7 +501,7 @@
                     if (event.transform.x > threshold) {
                         const newX = event.transform.x - scaledMapWidth;
                         const newTransform = d3.zoomIdentity
-                            .translate(newX, event.transform.y)
+                            .translate(newX, finalY)
                             .scale(currentZoom);
                         svg.call(zoom.transform, newTransform);
                         return;
