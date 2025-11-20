@@ -140,16 +140,20 @@
         }
 
         .country-label {
-            fill: #4a5568;
-            font-size: 8px;
+            fill: #2d3748;
+            font-size: 7px;
             font-weight: 600;
             pointer-events: none;
             text-shadow: 
-                1px 1px 2px rgba(255, 255, 255, 0.8),
-                -1px -1px 2px rgba(255, 255, 255, 0.8),
-                1px -1px 2px rgba(255, 255, 255, 0.8),
-                -1px 1px 2px rgba(255, 255, 255, 0.8);
-            opacity: 0.9;
+                1px 1px 2px rgba(255, 255, 255, 0.9),
+                -1px -1px 2px rgba(255, 255, 255, 0.9),
+                1px -1px 2px rgba(255, 255, 255, 0.9),
+                -1px 1px 2px rgba(255, 255, 255, 0.9);
+            opacity: 1;
+        }
+        
+        .country-label-small {
+            font-size: 5px;
         }
 
         .info-panel {
@@ -1179,12 +1183,29 @@
                         .data(countries.features)
                         .enter()
                         .append("text")
-                        .attr("class", "country-label")
+                        .attr("class", function(d) {
+                            const bounds = path.bounds(d);
+                            const area = (bounds[1][0] - bounds[0][0]) * (bounds[1][1] - bounds[0][1]);
+                            return area < 100 ? "country-label country-label-small" : "country-label";
+                        })
                         .attr("transform", function(d) {
                             const centroid = path.centroid(d);
+                            const bounds = path.bounds(d);
+                            const width = bounds[1][0] - bounds[0][0];
+                            const height = bounds[1][1] - bounds[0][1];
+                            const area = width * height;
+                            
+                            // For very small countries, position label to the right
+                            if (area < 50) {
+                                return `translate(${bounds[1][0] + 5}, ${centroid[1]})`;
+                            }
                             return `translate(${centroid[0]}, ${centroid[1]})`;
                         })
-                        .attr("text-anchor", "middle")
+                        .attr("text-anchor", function(d) {
+                            const bounds = path.bounds(d);
+                            const area = (bounds[1][0] - bounds[0][0]) * (bounds[1][1] - bounds[0][1]);
+                            return area < 50 ? "start" : "middle";
+                        })
                         .attr("dy", ".35em")
                         .text(function(d) {
                             let name = d.properties.name;
@@ -1192,9 +1213,39 @@
                             if (name === "Israel") {
                                 name = "Palestine";
                             }
+                            
+                            // Abbreviate long names for small countries
+                            const bounds = path.bounds(d);
+                            const width = bounds[1][0] - bounds[0][0];
+                            const area = width * (bounds[1][1] - bounds[0][1]);
+                            
+                            if (area < 200 && name.length > 15) {
+                                // Use abbreviations for small countries
+                                const abbr = {
+                                    "Bosnia and Herzegovina": "Bosnia",
+                                    "Central African Republic": "CAR",
+                                    "Dominican Republic": "Dom. Rep.",
+                                    "Equatorial Guinea": "Eq. Guinea",
+                                    "United Arab Emirates": "UAE",
+                                    "Democratic Republic of the Congo": "DR Congo",
+                                    "Republic of the Congo": "Congo"
+                                };
+                                return abbr[name] || name;
+                            }
+                            
                             return name;
                         })
-                        .style("pointer-events", "none");
+                        .style("pointer-events", "none")
+                        .each(function(d) {
+                            const bounds = path.bounds(d);
+                            const width = bounds[1][0] - bounds[0][0];
+                            const textWidth = this.getComputedTextLength();
+                            
+                            // Hide label if text is wider than country
+                            if (textWidth > width * 0.9 && width < 30) {
+                                d3.select(this).style("display", "none");
+                            }
+                        });
                 }
 
                 // Render 5 copies for better coverage: far left, left, center, right, far right
