@@ -24,31 +24,31 @@
 
         header {
             background: rgba(255, 255, 255, 0.95);
-            padding: 0.75rem 1rem;
+            padding: 0.4rem 1rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
         h1 {
             color: #2d3748;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 700;
             margin: 0;
         }
 
         .subtitle {
             color: #718096;
-            font-size: 0.8rem;
-            margin-top: 0.25rem;
+            font-size: 0.7rem;
+            margin-top: 0.15rem;
         }
 
         #map-container {
             flex: 1;
             position: relative;
             background: white;
-            margin: 0.5rem;
-            border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            margin: 0.25rem;
+            border-radius: 4px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -362,10 +362,10 @@
 
         footer {
             text-align: center;
-            padding: 0.5rem;
+            padding: 0.3rem;
             color: white;
-            font-size: 0.75rem;
-            opacity: 0.9;
+            font-size: 0.65rem;
+            opacity: 0.85;
         }
     </style>
 </head>
@@ -428,11 +428,11 @@
         const g = svg.append("g");
 
         // Projection - using a wrapping projection for infinite scroll
-        // Scale adjusted to show more of the world without vertical scroll
+        // Scale reduced significantly to fit everything in viewport
         const projection = d3.geoMercator()
-            .scale(130)
-            .translate([width / 2, height / 1.5])
-            .center([0, 20]);
+            .scale(110)
+            .translate([width / 2, height / 1.55])
+            .center([0, 25]);
 
         const path = d3.geoPath().projection(projection);
 
