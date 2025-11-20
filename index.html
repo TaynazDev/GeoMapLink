@@ -416,7 +416,7 @@
         const svg = d3.select("#map-container")
             .append("svg")
             .attr("viewBox", `0 0 ${width} ${height}`)
-            .attr("preserveAspectRatio", "xMidYMid slice");
+            .attr("preserveAspectRatio", "xMidYMid meet");
 
         // Blue ocean background
         svg.append("rect")
@@ -446,12 +446,21 @@
         // Zoom behavior with seamless wrapping
         const zoom = d3.zoom()
             .scaleExtent([1, 8])
+            .filter(function(event) {
+                // Allow zoom and horizontal pan only
+                return !event.button && event.type !== 'dblclick';
+            })
             .on("zoom", (event) => {
                 currentTransform = event.transform;
                 currentZoom = event.transform.k;
                 
+                // Lock vertical panning - only allow horizontal movement
+                const lockedTransform = d3.zoomIdentity
+                    .translate(event.transform.x, 0)
+                    .scale(currentZoom);
+                
                 // Apply transform
-                g.attr("transform", event.transform);
+                g.attr("transform", lockedTransform);
                 
                 // Check if we've scrolled too far and need to wrap
                 if (actualMapWidth > 0) {
