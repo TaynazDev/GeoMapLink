@@ -607,12 +607,48 @@
                     }
                 }
 
+                // Fetch weather data for capital city
+                let weather = null;
+                if (country.capitalInfo && country.capitalInfo.latlng) {
+                    try {
+                        const [lat, lon] = country.capitalInfo.latlng;
+                        const weatherResponse = await fetch(
+                            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=celsius`
+                        );
+                        
+                        if (weatherResponse.ok) {
+                            const weatherData = await weatherResponse.json();
+                            const current = weatherData.current;
+                            
+                            // Map weather codes to descriptions
+                            const weatherCodeMap = {
+                                0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+                                45: "Foggy", 48: "Foggy", 51: "Light drizzle", 53: "Drizzle", 55: "Heavy drizzle",
+                                61: "Light rain", 63: "Rain", 65: "Heavy rain", 71: "Light snow", 73: "Snow", 
+                                75: "Heavy snow", 77: "Snow grains", 80: "Light showers", 81: "Showers", 
+                                82: "Heavy showers", 85: "Light snow showers", 86: "Snow showers", 
+                                95: "Thunderstorm", 96: "Thunderstorm with hail", 99: "Thunderstorm with hail"
+                            };
+                            
+                            weather = {
+                                temp: `${Math.round(current.temperature_2m)}°C`,
+                                humidity: `${current.relative_humidity_2m}%`,
+                                windSpeed: `${Math.round(current.wind_speed_10m)} km/h`,
+                                condition: weatherCodeMap[current.weather_code] || "Unknown"
+                            };
+                        }
+                    } catch (err) {
+                        console.warn(`Could not fetch weather for ${countryName}:`, err);
+                    }
+                }
+
                 const countryInfo = {
                     name: country.name.common,
                     flag: country.flags.svg || country.flags.png,
                     population: country.population.toLocaleString(),
                     capital: country.capital ? country.capital[0] : "N/A",
                     localTime: localTime,
+                    weather: weather,
                     wikiLink: `https://en.wikipedia.org/wiki/${encodeURIComponent(country.name.common)}`
                 };
 
@@ -626,6 +662,7 @@
                     population: "Data unavailable",
                     capital: "Data unavailable",
                     localTime: "Data unavailable",
+                    weather: null,
                     wikiLink: `https://en.wikipedia.org/wiki/${encodeURIComponent(countryName)}`
                 };
             }
@@ -641,6 +678,28 @@
             document.getElementById('country-flag').alt = `${countryData.name} flag`;
             document.getElementById('country-name').textContent = countryData.name;
             
+            let weatherHTML = '';
+            if (countryData.weather) {
+                weatherHTML = `
+                    <div class="info-row">
+                        <span class="info-label">Weather</span>
+                        <span class="info-value">${countryData.weather.condition}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Temperature</span>
+                        <span class="info-value">${countryData.weather.temp}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Humidity</span>
+                        <span class="info-value">${countryData.weather.humidity}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Wind Speed</span>
+                        <span class="info-value">${countryData.weather.windSpeed}</span>
+                    </div>
+                `;
+            }
+            
             const detailsHTML = `
                 <div class="info-row">
                     <span class="info-label">Capital</span>
@@ -654,6 +713,7 @@
                     <span class="info-label">Population</span>
                     <span class="info-value">${countryData.population}</span>
                 </div>
+                ${weatherHTML}
             `;
             document.getElementById('country-details').innerHTML = detailsHTML;
             document.getElementById('wiki-link').href = countryData.wikiLink;
