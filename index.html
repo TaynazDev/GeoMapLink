@@ -88,19 +88,12 @@
             pointer-events: none;
         }
 
-        .timezone-line {
+        .timezone-boundary {
             fill: none;
-            stroke: #60a5fa;
-            stroke-width: 1;
-            stroke-dasharray: 4, 4;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .timezone-line.prime-meridian {
             stroke: #3b82f6;
-            stroke-width: 1.5;
-            opacity: 0.7;
+            stroke-width: 1.2;
+            opacity: 0.6;
+            pointer-events: none;
         }
 
         .timezone-label {
@@ -672,80 +665,75 @@
                 // Remove loading indicator
                 d3.select(".loading").remove();
 
-                // Draw time zone lines with real-world adjustments
-                function drawTimezoneLines(parentGroup, xOffset = 0) {
-                    const timezoneGroup = parentGroup.append("g")
-                        .attr("class", "timezone-lines")
-                        .attr("transform", `translate(${xOffset}, 0)`);
+                // Draw timezone boundaries using real-world timezone data
+                async function drawTimezoneLines(parentGroup, xOffset = 0) {
+                    try {
+                        // Load timezone boundary data from a GeoJSON source
+                        const timezoneData = await d3.json("https://cdn.jsdelivr.net/npm/timezones-geojson@1.0.0/dist/timezones.geojson");
+                        
+                        const timezoneGroup = parentGroup.append("g")
+                            .attr("class", "timezone-boundaries")
+                            .attr("transform", `translate(${xOffset}, 0)`);
 
-                    // Major timezone boundaries with real-world adjustments
-                    const timezones = [
-                        { lon: -165, label: 'UTC-11', adjustments: [] },
-                        { lon: -150, label: 'UTC-10', adjustments: [] },
-                        { lon: -135, label: 'UTC-9', adjustments: [] },
-                        { lon: -120, label: 'UTC-8', adjustments: [] },
-                        { lon: -105, label: 'UTC-7', adjustments: [] },
-                        { lon: -90, label: 'UTC-6', adjustments: [] },
-                        { lon: -75, label: 'UTC-5', adjustments: [] },
-                        { lon: -60, label: 'UTC-4', adjustments: [] },
-                        { lon: -45, label: 'UTC-3', adjustments: [] },
-                        { lon: -30, label: 'UTC-2', adjustments: [] },
-                        { lon: -15, label: 'UTC-1', adjustments: [] },
-                        { lon: 0, label: 'UTC', adjustments: [], isPrime: true },
-                        { lon: 15, label: 'UTC+1', adjustments: [] },
-                        { lon: 30, label: 'UTC+2', adjustments: [] },
-                        { lon: 45, label: 'UTC+3', adjustments: [] },
-                        { lon: 60, label: 'UTC+4', adjustments: [] },
-                        { lon: 75, label: 'UTC+5', adjustments: [] },
-                        { lon: 90, label: 'UTC+6', adjustments: [] },
-                        { lon: 105, label: 'UTC+7', adjustments: [] },
-                        { lon: 120, label: 'UTC+8', adjustments: [{lat: 40, lonShift: 15}] }, // China uses single timezone
-                        { lon: 135, label: 'UTC+9', adjustments: [] },
-                        { lon: 150, label: 'UTC+10', adjustments: [] },
-                        { lon: 165, label: 'UTC+11', adjustments: [] },
-                        { lon: 180, label: 'UTC+12', adjustments: [] }
-                    ];
-
-                    timezones.forEach(tz => {
-                        const points = [];
-                        // Sample points along latitude with adjustments for real boundaries
-                        for (let lat = -85; lat <= 85; lat += 2) {
-                            let adjustedLon = tz.lon;
-                            
-                            // Apply real-world adjustments (simplified)
-                            // This is a basic approximation - real timezones are much more complex
-                            if (tz.lon === 120 && lat > 20 && lat < 50) {
-                                // China's single timezone adjustment
-                                adjustedLon = 120;
-                            }
-                            
-                            const projected = projection([adjustedLon, lat]);
-                            if (projected) {
-                                points.push(projected);
-                            }
-                        }
-
-                        if (points.length > 0) {
-                            const lineGenerator = d3.line()
-                                .x(d => d[0])
-                                .y(d => d[1])
-                                .curve(d3.curveLinear);
-
+                        // Draw each timezone boundary
+                        timezoneData.features.forEach(feature => {
                             timezoneGroup.append("path")
-                                .attr("d", lineGenerator(points))
-                                .attr("class", `timezone-line ${tz.isPrime ? 'prime-meridian' : ''}`);
+                                .datum(feature)
+                                .attr("class", "timezone-boundary")
+                                .attr("d", path);
 
-                            // Add UTC offset label at the top
-                            const labelX = points[0][0];
-                            const labelY = points[0][1] - 10;
-                            
-                            timezoneGroup.append("text")
-                                .attr("class", "timezone-label")
-                                .attr("x", labelX)
-                                .attr("y", labelY)
-                                .text(tz.label);
+                            // Add timezone label at centroid
+                            const centroid = path.centroid(feature);
+                            if (centroid && !isNaN(centroid[0]) && !isNaN(centroid[1])) {
+                                const tzName = feature.properties.TZID || feature.properties.tzid || '';
+                                const utcOffset = feature.properties.UTC_OFFSET || feature.properties.utc_offset || '';
+                                
+                                if (utcOffset) {
+                                    timezoneGroup.append("text")
+                                        .attr("class", "timezone-label")
+                                        .attr("x", centroid[0])
+                                        .attr("y", centroid[1])
+                                        .text(utcOffset);
+                                }
+                            }
+                        });
+                    } catch (error) {
+                        console.warn("Could not load timezone boundaries, using simplified version:", error);
+                        // Fallback to simplified version
+                        const timezoneGroup = parentGroup.append("g")
+                            .attr("class", "timezone-lines")
+                            .attr("transform", `translate(${xOffset}, 0)`);
+
+                        // Simplified timezone boundaries at major hour offsets
+                        for (let lon = -180; lon <= 180; lon += 15) {
+                            const points = [];
+                            for (let lat = -85; lat <= 85; lat += 1) {
+                                const projected = projection([lon, lat]);
+                                if (projected) points.push(projected);
+                            }
+
+                            if (points.length > 0) {
+                                const lineGenerator = d3.line()
+                                    .x(d => d[0])
+                                    .y(d => d[1]);
+
+                                timezoneGroup.append("path")
+                                    .attr("d", lineGenerator(points))
+                                    .attr("class", "timezone-boundary");
+
+                                const hourOffset = lon / 15;
+                                const label = hourOffset === 0 ? 'UTC' : 
+                                            hourOffset > 0 ? `UTC+${hourOffset}` : 
+                                            `UTC${hourOffset}`;
+                                
+                                timezoneGroup.append("text")
+                                    .attr("class", "timezone-label")
+                                    .attr("x", points[0][0])
+                                    .attr("y", points[0][1] - 10)
+                                    .text(label);
+                            }
                         }
-                    });
+                    }
                 }
 
                 // Draw latitude lines first (behind countries)
@@ -828,9 +816,9 @@
                 renderCountries(mapWidth);
 
                 // Draw time zone lines AFTER countries (so they appear on top)
-                drawTimezoneLines(g, -mapWidth);
-                drawTimezoneLines(g, 0);
-                drawTimezoneLines(g, mapWidth);
+                await drawTimezoneLines(g, -mapWidth);
+                await drawTimezoneLines(g, 0);
+                await drawTimezoneLines(g, mapWidth);
 
                 // Draw latitude lines AFTER countries (so they appear on top)
                 drawLatitudeLines(g, -mapWidth);
