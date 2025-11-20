@@ -414,7 +414,7 @@
         const svg = d3.select("#map-container")
             .append("svg")
             .attr("viewBox", `0 0 ${width} ${height}`)
-            .attr("preserveAspectRatio", "xMidYMid meet");
+            .attr("preserveAspectRatio", "xMidYMid slice");
 
         // Blue ocean background
         svg.append("rect")
@@ -427,10 +427,11 @@
         const g = svg.append("g");
 
         // Projection - using a wrapping projection for infinite scroll
+        // Scale adjusted to fill viewport height
         const projection = d3.geoMercator()
-            .scale(150)
-            .translate([width / 2, height / 1.5])
-            .center([0, 0]);
+            .scale(155)
+            .translate([width / 2, height / 1.4])
+            .center([0, 15]);
 
         const path = d3.geoPath().projection(projection);
 
