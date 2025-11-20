@@ -763,9 +763,16 @@
                     }
                 }
                 
-                // Adjust stroke width based on zoom
+                // Adjust stroke width and label size based on zoom
                 g.selectAll(".country")
                     .style("stroke-width", 0.5 / currentZoom);
+                
+                // Scale down country labels when zooming in
+                g.selectAll(".country-label")
+                    .style("font-size", function() {
+                        const baseSize = d3.select(this).classed("country-label-small") ? 5 : 7;
+                        return `${baseSize / currentZoom}px`;
+                    });
             });
 
         svg.call(zoom);
