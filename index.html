@@ -824,10 +824,12 @@
                         });
                 }
 
-                // Render 3 copies: left, center, right
+                // Render 5 copies for better coverage: far left, left, center, right, far right
+                renderCountries(-mapWidth * 2);
                 renderCountries(-mapWidth);
                 renderCountries(0);
                 renderCountries(mapWidth);
+                renderCountries(mapWidth * 2);
 
                 // Draw time zone lines AFTER countries (so they appear on top)
                 await drawTimezoneLines(g, -mapWidth);
