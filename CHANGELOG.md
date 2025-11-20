@@ -36,13 +36,15 @@ Semantic Versioning once releases begin.
 - UTC timezone labels: reduced font size from 9px to 7px for better visual balance
 - Timezone handling: improved to support both IANA timezone identifiers and UTC offset calculations
 - UI Layout: info panel now permanently visible on left side, map and panel side-by-side
-- Zoom controls: repositioned to left side of map container
+- Zoom controls: moved to macOS-style dock at bottom center with translucent background and blur effect
 - Background: changed from purple gradient to dark (#1a1a1a) for modern look
 - Header: replaced solid header bar with fixed gradient overlay at top with centered logo
 - Top gradient: reduced height to 60px (half original size) with smaller logo
-- Country labels: positioned 15px lower to avoid overlap with top gradient
+- Country labels: positioned 15px lower to avoid overlap with top gradient, all names now centered at country centroids
 - Info panel header: increased top padding to 4rem to prevent flag/country name from clashing with top gradient
 - Weather display: redesigned as tall widget (400px min-height) with large icon, temperature, and grid layout for details
+- Weather icons: now dynamically update based on actual weather conditions and time of day (day/night detection)
+- Terrain colors: enriched green colors for tropical rainforests (deeper, richer greens) and temperate regions
 - Israel renamed to Palestine throughout the application
 - Logo font: applied "Splash" brush script font to all "Clickmap" branding
 
@@ -53,6 +55,8 @@ Semantic Versioning once releases begin.
 - Map wrapping: increased coverage to eliminate gaps when scrolling horizontally
 - Geographic lines continuity: timezone and latitude lines now extend across all map copies
 - Country name visibility: moved labels down to prevent overlap with top gradient overlay
+- Weather emoji icons: fixed encoding issues and added proper day/night detection
+- Country label positioning: all labels now properly centered, removed logic that hid labels for small countries
 
 ### Removed
 - Footer removed to maximize map viewing area
@@ -60,6 +64,7 @@ Semantic Versioning once releases begin.
 - Close button for info panel
 - Traditional header bar with subtitle
 - Rounded corners and margins on map/panel (full edge-to-edge design)
+- Label hiding logic: all country names now visible regardless of size
 
 ## 0.2.0 - 2025-11-20
 

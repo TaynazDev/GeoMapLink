@@ -325,26 +325,31 @@
         }
 
         .controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 100;
+            flex-direction: row;
+            gap: 12px;
+            z-index: 1002;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
         }
 
         .control-btn {
-            background: white;
+            background: transparent;
             border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 1.5rem;
             font-weight: 600;
             color: #4a5568;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
@@ -700,19 +705,19 @@
             "Botswana": "#D1BA93", "Mongolia": "#D6C0A0", "Kazakhstan": "#D4BD98",
             
             // Tropical/Rainforest (deep green)
-            "Brazil": "#6B8E5F", "Democratic Republic of the Congo": "#5A7D52", "Congo": "#5F8457",
-            "Indonesia": "#608558", "Colombia": "#5C7F54", "Peru": "#687F58", "Venezuela": "#5F8256",
-            "Gabon": "#5A7C52", "Cameroon": "#5D7E54", "Central African Republic": "#5F8057",
-            "Ecuador": "#5C7D53", "Papua New Guinea": "#5B7D52", "Malaysia": "#5D8055",
-            "Myanmar": "#5F8358", "Thailand": "#608457", "Vietnam": "#5E8256", "Laos": "#5D7F54",
-            "Cambodia": "#5F8357", "Philippines": "#5E8155", "Nigeria": "#5C7E53",
+            "Brazil": "#2D6B4F", "Democratic Republic of the Congo": "#1F5D3E", "Congo": "#28654D",
+            "Indonesia": "#2A6850", "Colombia": "#245F3C", "Peru": "#2D6F48", "Venezuela": "#276246",
+            "Gabon": "#225C3A", "Cameroon": "#255E3C", "Central African Republic": "#276045",
+            "Ecuador": "#245D3B", "Papua New Guinea": "#235D3A", "Malaysia": "#256043",
+            "Myanmar": "#276346", "Thailand": "#286445", "Vietnam": "#266244", "Laos": "#255F3C",
+            "Cambodia": "#276345", "Philippines": "#266143", "Nigeria": "#245E3B",
             
             // Temperate/Mixed (light green)
-            "United States": "#8FA67C", "China": "#88A175", "Russia": "#8AA178", "Canada": "#85A079",
-            "Australia": "#9AAE87", "India": "#8DA47A", "Mexico": "#91A57D", "Argentina": "#8FA37C",
-            "France": "#90A57E", "Germany": "#8DA47B", "Poland": "#8BA279", "Ukraine": "#8CA37A",
-            "United Kingdom": "#8DA57C", "Italy": "#92A680", "Spain": "#94A881", "Turkey": "#8FA47D",
-            "Japan": "#87A178", "South Korea": "#89A27A", "North Korea": "#87A077",
+            "United States": "#6B8C5A", "China": "#648755", "Russia": "#668958", "Canada": "#5F8657",
+            "Australia": "#7A9665", "India": "#698A58", "Mexico": "#6D8B5B", "Argentina": "#6B895A",
+            "France": "#6C8B5C", "Germany": "#698A59", "Poland": "#678857", "Ukraine": "#688958",
+            "United Kingdom": "#698B5A", "Italy": "#6E8C5E", "Spain": "#708E5F", "Turkey": "#6B8A5B",
+            "Japan": "#638756", "South Korea": "#658858", "North Korea": "#638655",
             
             // Tundra/Cold (gray-green)
             "Iceland": "#A5B5A8", "Norway": "#9BAC9F", "Sweden": "#9CAD A0", "Finland": "#9AAB9E",
@@ -1035,25 +1040,30 @@
             let weatherHTML = '';
             if (countryData.weather) {
                 // Determine weather icon based on condition
-                let weatherIcon = '☀️'; // Default sun
+                // Determine if it's night time based on local time
+                const timeStr = countryData.localTime;
+                const hour = timeStr ? parseInt(timeStr.split(':')[0]) : 12;
+                const isNight = hour < 6 || hour >= 20;
+                
+                let weatherIcon = isNight ? '🌙' : '☀️'; // Default based on time
                 const condition = countryData.weather.condition.toLowerCase();
                 
-                if (condition.includes('clear') && condition.includes('night')) {
-                    weatherIcon = '🌙';
-                } else if (condition.includes('clear')) {
-                    weatherIcon = '☀️';
-                } else if (condition.includes('cloud')) {
+                if (condition.includes('clear')) {
+                    weatherIcon = isNight ? '🌙' : '☀️';
+                } else if (condition.includes('partly') || condition.includes('mainly')) {
+                    weatherIcon = isNight ? '☁️' : '⛅';
+                } else if (condition.includes('overcast') || condition.includes('cloud')) {
                     weatherIcon = '☁️';
-                } else if (condition.includes('rain') || condition.includes('drizzle')) {
+                } else if (condition.includes('rain') || condition.includes('shower')) {
                     weatherIcon = '🌧️';
+                } else if (condition.includes('drizzle')) {
+                    weatherIcon = '🌦️';
                 } else if (condition.includes('snow')) {
                     weatherIcon = '❄️';
                 } else if (condition.includes('thunder') || condition.includes('storm')) {
                     weatherIcon = '⛈️';
                 } else if (condition.includes('fog') || condition.includes('mist')) {
                     weatherIcon = '🌫️';
-                } else if (condition.includes('partly')) {
-                    weatherIcon = '⛅';
                 }
                 
                 weatherHTML = `
@@ -1308,22 +1318,9 @@
                         })
                         .attr("transform", function(d) {
                             const centroid = path.centroid(d);
-                            const bounds = path.bounds(d);
-                            const width = bounds[1][0] - bounds[0][0];
-                            const height = bounds[1][1] - bounds[0][1];
-                            const area = width * height;
-                            
-                            // For very small countries, position label to the right
-                            if (area < 50) {
-                                return `translate(${bounds[1][0] + 5}, ${centroid[1] + 15})`;
-                            }
                             return `translate(${centroid[0]}, ${centroid[1] + 15})`;
                         })
-                        .attr("text-anchor", function(d) {
-                            const bounds = path.bounds(d);
-                            const area = (bounds[1][0] - bounds[0][0]) * (bounds[1][1] - bounds[0][1]);
-                            return area < 50 ? "start" : "middle";
-                        })
+                        .attr("text-anchor", "middle")
                         .attr("dy", ".35em")
                         .text(function(d) {
                             let name = d.properties.name;
@@ -1353,17 +1350,7 @@
                             
                             return name;
                         })
-                        .style("pointer-events", "none")
-                        .each(function(d) {
-                            const bounds = path.bounds(d);
-                            const width = bounds[1][0] - bounds[0][0];
-                            const textWidth = this.getComputedTextLength();
-                            
-                            // Hide label if text is wider than country
-                            if (textWidth > width * 0.9 && width < 30) {
-                                d3.select(this).style("display", "none");
-                            }
-                        });
+                        .style("pointer-events", "none");
                 }
 
                 // Render 5 copies for better coverage: far left, left, center, right, far right
