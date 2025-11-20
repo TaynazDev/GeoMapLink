@@ -368,16 +368,65 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: white;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 10000;
-            animation: fadeOut 0.5s ease-in-out 2.5s forwards;
+            overflow: hidden;
         }
 
-        @keyframes fadeOut {
+        .splash-screen::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, #764ba2 0%, #667eea 50%, #764ba2 100%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: paintSplash 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            z-index: 1;
+        }
+
+        @keyframes paintSplash {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            60% {
+                width: 300vmax;
+                height: 300vmax;
+                opacity: 1;
+            }
+            100% {
+                width: 300vmax;
+                height: 300vmax;
+                opacity: 1;
+            }
+        }
+
+        .splash-content {
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            animation: fadeInContent 0.6s ease-out 0.8s forwards;
+        }
+
+        @keyframes fadeInContent {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .splash-screen.fade-out {
+            animation: fadeOutSplash 0.6s ease-in-out forwards;
+        }
+
+        @keyframes fadeOutSplash {
             to {
                 opacity: 0;
                 visibility: hidden;
@@ -385,46 +434,124 @@
         }
 
         .splash-logo {
-            font-size: 5rem;
-            animation: bounce 1s ease-in-out infinite alternate;
+            font-size: 6rem;
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
+            animation: dropIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1s forwards;
+            transform: translateY(-100px);
+            opacity: 0;
         }
 
-        @keyframes bounce {
-            from {
-                transform: translateY(0px);
-            }
+        @keyframes dropIn {
             to {
-                transform: translateY(-20px);
+                transform: translateY(0);
+                opacity: 1;
             }
         }
 
         .splash-title {
             color: white;
-            font-size: 3rem;
-            font-weight: 700;
+            font-size: 4rem;
+            font-weight: 900;
             margin-top: 1rem;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            position: relative;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            text-shadow: 
+                3px 3px 0px rgba(0, 0, 0, 0.2),
+                6px 6px 0px rgba(0, 0, 0, 0.1);
+            animation: paintReveal 1.5s ease-out 1.2s forwards;
+            background: linear-gradient(to right, 
+                transparent 0%, 
+                transparent 50%, 
+                white 50%, 
+                white 100%);
+            background-size: 200% 100%;
+            background-position: 0% 0%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes paintReveal {
+            to {
+                background-position: -100% 0%;
+                -webkit-text-fill-color: white;
+            }
+        }
+
+        .splash-title::before {
+            content: 'CLICKMAP';
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: rgba(255, 255, 255, 0.1);
+            transform: translate(-3px, 3px);
+            z-index: -1;
         }
 
         .splash-subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.2rem;
-            margin-top: 0.5rem;
-            font-weight: 300;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.3rem;
+            margin-top: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            opacity: 0;
+            animation: slideUp 0.6s ease-out 1.8s forwards;
+            transform: translateY(20px);
         }
 
-        .splash-loader {
-            margin-top: 2rem;
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* Paint drips */
+        .paint-drip {
+            position: absolute;
+            width: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            bottom: -100px;
+            animation: drip 1.5s ease-in forwards;
+            border-radius: 0 0 50% 50%;
+            opacity: 0;
+        }
+
+        .paint-drip:nth-child(1) {
+            left: 20%;
+            height: 80px;
+            animation-delay: 1.5s;
+        }
+
+        .paint-drip:nth-child(2) {
+            left: 45%;
+            height: 120px;
+            animation-delay: 1.7s;
+        }
+
+        .paint-drip:nth-child(3) {
+            left: 70%;
+            height: 100px;
+            animation-delay: 1.6s;
+        }
+
+        .paint-drip:nth-child(4) {
+            left: 85%;
+            height: 90px;
+            animation-delay: 1.8s;
+        }
+
+        @keyframes drip {
+            0% {
+                top: 45%;
+                opacity: 1;
+            }
+            100% {
+                top: 100%;
+                opacity: 0.5;
+            }
         }
 
     </style>
@@ -432,10 +559,15 @@
 <body>
     <!-- Splash Screen -->
     <div class="splash-screen" id="splash">
-        <div class="splash-logo">🌍</div>
-        <h1 class="splash-title">Clickmap</h1>
-        <p class="splash-subtitle">Explore the world in real-time</p>
-        <div class="splash-loader"></div>
+        <div class="splash-content">
+            <div class="splash-logo">🌍</div>
+            <h1 class="splash-title">CLICKMAP</h1>
+            <p class="splash-subtitle">Explore the world in real-time</p>
+        </div>
+        <div class="paint-drip"></div>
+        <div class="paint-drip"></div>
+        <div class="paint-drip"></div>
+        <div class="paint-drip"></div>
     </div>
 
     <header>
@@ -467,6 +599,12 @@
     </div>
 
     <script>
+        // Hide splash screen after animation completes
+        setTimeout(() => {
+            const splash = document.getElementById('splash');
+            splash.classList.add('fade-out');
+        }, 3000);
+
         // Configuration
         const width = 931.2;
         const height = 612;
