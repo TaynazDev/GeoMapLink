@@ -11,6 +11,12 @@ Semantic Versioning once releases begin.
 
 ## 0.3.0 - 2025-11-20
 
+### Added
+- Real-time weather information for each country's capital city (condition, temperature, humidity, wind speed)
+- Current local time display for each country's capital city in the info card
+- Extended map rendering from 3 to 5 copies for seamless infinite scrolling
+- Timezone and latitude lines now render across all 5 map copies
+
 ### Changed
 - Viewport: set initial page zoom to 100% (normal size)
 - SVG viewport dimensions: reduced by 3% (931.2 x 612) to provide better spacing
@@ -19,11 +25,14 @@ Semantic Versioning once releases begin.
 - SVG aspect ratio: changed from "slice" to "meet" to fit height instead of width
 - Ocean background: extended 5x width to cover all wrapped map copies
 - UTC timezone labels: reduced font size from 9px to 7px for better visual balance
+- Timezone handling: improved to support both IANA timezone identifiers and UTC offset calculations
 
 ### Fixed
 - Vertical scrolling: locked page height to 100vh with overflow hidden to prevent all scrolling
 - Vertical panning: now locked at zoom level 1, enabled only when zoomed in
 - Map positioning: adjusted center latitude and translation for better continent placement and Antarctica visibility
+- Map wrapping: increased coverage to eliminate gaps when scrolling horizontally
+- Geographic lines continuity: timezone and latitude lines now extend across all map copies
 
 ### Removed
 - Footer removed to maximize map viewing area
