@@ -5,9 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project aims to follow
 Semantic Versioning once releases begin.
 
-## [Unreleased]
+## [1.0.0] - 2025-11-28
 
-- Planned: Versioning and release notes structure
+### Added
+- Search toggle button in dock: click magnifying glass icon to show/hide search sidebar
+- Search sidebar now slides in as overlay from right side with backdrop
+- Close button in search sidebar for easy dismissal
+- Dock styling updated to Apple liquid glass aesthetic with translucent background and blur effect
+
+### Changed
+- Font changed from "Splash" (brush script) to "Inter" (minimal sans-serif) for logo and country names
+- Dock appearance: semi-transparent grey gradient background with reduced blur (25px)
+- Dock buttons reduced to 36px for more compact design
+- Country labels now perfectly centered at country centroids (removed vertical offset)
+- Search sidebar: changed from fixed panel to slide-in overlay for better space efficiency
+
+### Fixed
+- Search sidebar positioning and toggle functionality
+- Icon sizing and dock proportions for better visual balance
 
 ## [0.4.0] - 2025-11-20
 

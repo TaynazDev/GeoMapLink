@@ -6,7 +6,7 @@
     <title>Clickmap - Interactive World Map</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Splash&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -52,10 +52,11 @@
         .logo h1 {
             color: white;
             font-size: 1.5rem;
-            font-weight: 700;
+            font-weight: 600;
             margin: 0;
-            font-family: 'Splash', cursive;
+            font-family: 'Inter', sans-serif;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            letter-spacing: -0.02em;
         }
 
         #map-container {
@@ -158,14 +159,41 @@
         }
 
         .search-sidebar {
-            position: relative;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
             width: 320px;
             background: #f8f9fa;
             box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            z-index: 1003;
             display: flex;
             flex-direction: column;
             border-radius: 0;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .search-sidebar.visible {
+            transform: translateX(0);
+        }
+
+        .search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .search-overlay.visible {
+            opacity: 1;
+            visibility: visible;
         }
 
         .search-header {
@@ -426,30 +454,35 @@
 
         .controls {
             position: fixed;
-            bottom: 20px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             flex-direction: row;
-            gap: 12px;
+            gap: 4px;
             z-index: 1002;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 12px 20px;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(220, 220, 220, 0.65) 0%, rgba(210, 210, 210, 0.55) 100%);
+            padding: 8px;
+            border-radius: 100px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                inset 0 1px 1px rgba(255, 255, 255, 0.8),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
         .control-btn {
             background: transparent;
             border: none;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #4a5568;
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #1a1a1a;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
@@ -457,13 +490,14 @@
         }
 
         .control-btn:hover {
-            background: #667eea;
-            color: white;
-            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.6);
+            color: #000000;
+            transform: scale(1.08);
         }
 
         .control-btn:active {
             transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.8);
         }
 
         .loading {
@@ -632,9 +666,9 @@
             font-size: 6rem;
             font-weight: 700;
             margin-top: 1rem;
-            letter-spacing: 0.02em;
+            letter-spacing: -0.02em;
             position: relative;
-            font-family: 'Splash', cursive;
+            font-family: 'Inter', sans-serif;
             text-shadow: 
                 3px 3px 0px rgba(0, 0, 0, 0.3),
                 5px 5px 10px rgba(0, 0, 0, 0.2),
@@ -780,21 +814,47 @@
             </div>
             
             <div class="controls">
-                <button class="control-btn" id="zoom-in" title="Zoom In">+</button>
-                <button class="control-btn" id="zoom-out" title="Zoom Out">−</button>
-                <button class="control-btn" id="reset" title="Reset View">⟲</button>
+                <button class="control-btn" id="zoom-in" title="Zoom In">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+                <button class="control-btn" id="zoom-out" title="Zoom Out">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+                <button class="control-btn" id="reset" title="Reset View">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                </button>
+                <button class="control-btn" id="search-toggle" title="Search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
             </div>
         </div>
-        
-        <!-- Search Sidebar -->
-        <div class="search-sidebar">
-            <div class="search-header">
+    </div>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="search-overlay"></div>
+    
+    <!-- Search Sidebar -->
+    <div class="search-sidebar" id="search-sidebar">
+        <div class="search-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div class="search-title">Search</div>
-                <input type="text" class="search-input" id="search-input" placeholder="Search countries or cities...">
+                <button id="search-close" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 0; line-height: 1;">×</button>
             </div>
-            <div class="search-results" id="search-results">
-                <div style="text-align: center; color: #718096; padding: 2rem;">Type to search...</div>
-            </div>
+            <input type="text" class="search-input" id="search-input" placeholder="Search countries or cities...">
+        </div>
+        <div class="search-results" id="search-results">
+            <div style="text-align: center; color: #718096; padding: 2rem;">Type to search...</div>
         </div>
     </div>
 
@@ -1602,7 +1662,7 @@
                         })
                         .attr("transform", function(d) {
                             const centroid = path.centroid(d);
-                            return `translate(${centroid[0]}, ${centroid[1] + 15})`;
+                            return `translate(${centroid[0]}, ${centroid[1]})`;
                         })
                         .attr("text-anchor", "middle")
                         .attr("dy", ".35em")
@@ -1812,6 +1872,33 @@
         window.addEventListener('resize', () => {
             isMobile = window.matchMedia("(max-width: 768px)").matches;
         });
+
+        // Search toggle functionality
+        const searchSidebar = document.getElementById('search-sidebar');
+        const searchOverlay = document.getElementById('search-overlay');
+        const searchToggle = document.getElementById('search-toggle');
+
+        function openSearch() {
+            searchSidebar.classList.add('visible');
+            searchOverlay.classList.add('visible');
+            document.getElementById('search-input').focus();
+        }
+
+        function closeSearch() {
+            searchSidebar.classList.remove('visible');
+            searchOverlay.classList.remove('visible');
+        }
+
+        searchToggle.addEventListener('click', () => {
+            if (searchSidebar.classList.contains('visible')) {
+                closeSearch();
+            } else {
+                openSearch();
+            }
+        });
+
+        searchOverlay.addEventListener('click', closeSearch);
+        document.getElementById('search-close').addEventListener('click', closeSearch);
 
         // Search input handler
         const searchInput = document.getElementById('search-input');
