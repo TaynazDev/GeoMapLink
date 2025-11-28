@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project aims to follow
 Semantic Versioning once releases begin.
 
+## [2.0.0-alpha] - 2025-11-28
+
+### Added
+- **Satellite Mode**: Toggle between map and satellite imagery views with smooth transitions
+  - Satellite toggle button with liquid glass design in top right
+  - NASA Blue Marble satellite imagery with seamless wrapping
+  - Country overlays become semi-transparent (15% opacity) in satellite mode
+  - 5 satellite image copies for infinite horizontal scrolling
+- **Live UTC Time Display**: Real-time UTC clock in top right corner, updates every second
+- **Expanded City Database**: Added 15+ new countries with major cities:
+  - Belgium (Brussels, Antwerp, Ghent)
+  - Sweden (Stockholm, Gothenburg, Malmö)
+  - Norway (Oslo, Bergen, Trondheim)
+  - Denmark (Copenhagen, Aarhus, Odense)
+  - Finland (Helsinki, Espoo, Tampere)
+  - Austria (Vienna, Graz, Salzburg)
+  - Switzerland (Bern, Zurich, Geneva)
+  - Czech Republic (Prague, Brno, Ostrava)
+  - Romania (Bucharest, Cluj-Napoca, Timișoara)
+  - Hungary (Budapest, Debrecen, Szeged)
+  - Ireland (Dublin, Cork, Galway)
+  - Singapore, Hong Kong
+  - Taiwan (Taipei, Kaohsiung, Taichung)
+  - Israel (Jerusalem, Tel Aviv, Haifa)
+  - Venezuela (Caracas, Maracaibo, Valencia)
+  - Ecuador (Quito, Guayaquil, Cuenca)
+- **Enhanced Search**: City search now automatically selects the city and opens country panel
+  - Search sidebar closes automatically after city selection
+  - Smooth transition from search to city details
+
+### Changed
+- **UI Layout**: Repositioned satellite toggle below UTC time in top right corner
+- **Splash Screen**: Map loading now delayed until splash animation completes (3.1s)
+- **Ocean Color**: Lighter blue (#1e3a5f) for better visibility and contrast
+- **Splash Animation**: Fixed timing to 2.5s display + 600ms fade-out
+
+### Fixed
+- Satellite imagery alignment with country borders using projection coordinates
+- Satellite image vertical positioning and sizing for proper map coverage
+- City marker removal (were added by mistake in earlier version)
+- Splash screen animation properly hides after completion
+
 ## [1.0.0] - 2025-11-28
 
 ### Added
