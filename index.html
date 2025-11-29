@@ -2781,18 +2781,20 @@
                     oceanRect.transition().duration(500).style("opacity", 0);
                 }
                 
-                // Make countries very transparent to show satellite underneath
+                // Remove country fill completely, keep only borders
                 d3.selectAll('.country')
                     .transition()
                     .duration(500)
-                    .style("fill-opacity", 0.05)
-                    .style("stroke-opacity", 0.3);
+                    .style("fill", "none")
+                    .style("stroke", "#ffffff")
+                    .style("stroke-width", "0.5")
+                    .style("stroke-opacity", 0.4);
                 
                 // Keep labels visible
                 d3.selectAll('.country-label')
                     .transition()
                     .duration(500)
-                    .style("opacity", 1);
+                    .style("opacity", 0.9);
             } else {
                 // Hide all satellite imagery
                 d3.selectAll('.satellite-bg')
@@ -2804,11 +2806,20 @@
                     oceanRect.transition().duration(500).style("opacity", 1);
                 }
                 
-                // Return countries to normal opacity
+                // Restore countries to original colors
                 d3.selectAll('.country')
                     .transition()
                     .duration(500)
-                    .style("fill-opacity", 1)
+                    .style("fill", function() {
+                        // Restore original terrain color
+                        const d = d3.select(this).datum();
+                        if (d && d.properties && d.properties.name) {
+                            return terrainColors[d.properties.name] || defaultTerrainColor;
+                        }
+                        return defaultTerrainColor;
+                    })
+                    .style("stroke", "#1a1d2e")
+                    .style("stroke-width", "0.5")
                     .style("stroke-opacity", 1);
                 
                 d3.selectAll('.country-label')
