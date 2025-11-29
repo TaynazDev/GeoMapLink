@@ -2338,7 +2338,10 @@
                 const mapWidth = rightBound - leftBound;
                 actualMapWidth = mapWidth; // Store for zoom handler
 
-                // Add satellite images first (so they appear behind countries)
+                // Create satellite layer group FIRST (so it's behind countries)
+                const satelliteGroup = g.append("g").attr("class", "satellite-layer");
+                
+                // Add satellite images
                 updateLoadingProgress(70, 'Loading satellite imagery...');
                 const satelliteOffsets = [-mapWidth * 2, -mapWidth, 0, mapWidth, mapWidth * 2];
                 let satelliteImagesLoaded = 0;
@@ -2353,15 +2356,15 @@
                     };
                     img.src = "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg";
                     
-                    g.append("image")
+                    satelliteGroup.append("image")
                         .attr("class", "satellite-bg")
-                        .attr("href", "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg")
+                        .attr("xlink:href", "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg")
                         .attr("x", topLeft[0] + offset)
                         .attr("y", -height * 0.18)
                         .attr("width", imageWidth)
                         .attr("height", imageHeight)
                         .attr("opacity", 0)
-                        .lower(); // Ensure satellite images are behind everything
+                        .attr("preserveAspectRatio", "xMidYMid slice");
                 });
 
                 // Function to render countries at a given x offset for wrapping
@@ -2713,16 +2716,26 @@
             satelliteModeActive = !satelliteModeActive;
             satelliteSwitch.classList.toggle('active');
             
+            console.log('Satellite mode:', satelliteModeActive);
+            console.log('Satellite images found:', d3.selectAll('.satellite-bg').size());
+            
             if (satelliteModeActive) {
                 // Show all satellite imagery
-                d3.selectAll('.satellite-bg').transition().duration(500).attr("opacity", 1);
-                if (oceanRect) oceanRect.transition().duration(500).style("opacity", 0);
-                // Make countries slightly transparent to show satellite underneath
+                d3.selectAll('.satellite-bg')
+                    .transition()
+                    .duration(500)
+                    .attr("opacity", 1);
+                    
+                if (oceanRect) {
+                    oceanRect.transition().duration(500).style("opacity", 0);
+                }
+                
+                // Make countries very transparent to show satellite underneath
                 d3.selectAll('.country')
                     .transition()
                     .duration(500)
-                    .style("fill-opacity", 0.15)
-                    .style("stroke-opacity", 0.6);
+                    .style("fill-opacity", 0.05)
+                    .style("stroke-opacity", 0.3);
                 
                 // Keep labels visible
                 d3.selectAll('.country-label')
@@ -2731,8 +2744,15 @@
                     .style("opacity", 1);
             } else {
                 // Hide all satellite imagery
-                d3.selectAll('.satellite-bg').transition().duration(500).attr("opacity", 0);
-                if (oceanRect) oceanRect.transition().duration(500).style("opacity", 1);
+                d3.selectAll('.satellite-bg')
+                    .transition()
+                    .duration(500)
+                    .attr("opacity", 0);
+                    
+                if (oceanRect) {
+                    oceanRect.transition().duration(500).style("opacity", 1);
+                }
+                
                 // Return countries to normal opacity
                 d3.selectAll('.country')
                     .transition()
