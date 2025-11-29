@@ -212,24 +212,31 @@
         .search-input {
             width: 100%;
             padding: 0.75rem 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 9999px;
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15),
-                        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, rgba(220, 220, 220, 0.65) 0%, rgba(210, 210, 210, 0.55) 100%);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.8),
+                        inset 0 -1px 1px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             height: 42px;
+            color: #1a1a1a;
         }
 
         .search-input:focus {
             outline: none;
-            background: rgba(255, 255, 255, 0.85);
-            border-color: rgba(102, 126, 234, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(102, 126, 234, 0.25),
-                        inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+            background: linear-gradient(135deg, rgba(230, 230, 230, 0.75) 0%, rgba(220, 220, 220, 0.65) 100%);
+            border-color: rgba(102, 126, 234, 0.6);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+                        inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-input::placeholder {
+            color: rgba(0, 0, 0, 0.4);
         }
 
         .search-results {
@@ -292,25 +299,28 @@
         .city-dropdown {
             width: 100%;
             padding: 0.75rem 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 9999px;
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15),
-                        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, rgba(220, 220, 220, 0.65) 0%, rgba(210, 210, 210, 0.55) 100%);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.8),
+                        inset 0 -1px 1px rgba(0, 0, 0, 0.05);
             cursor: pointer;
             transition: all 0.3s ease;
             height: 42px;
+            color: #1a1a1a;
         }
 
         .city-dropdown:focus {
             outline: none;
-            background: rgba(255, 255, 255, 0.85);
-            border-color: rgba(102, 126, 234, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(102, 126, 234, 0.25),
-                        inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+            background: linear-gradient(135deg, rgba(230, 230, 230, 0.75) 0%, rgba(220, 220, 220, 0.65) 100%);
+            border-color: rgba(102, 126, 234, 0.6);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+                        inset 0 -1px 1px rgba(0, 0, 0, 0.05);
         }
 
         .panel-header {

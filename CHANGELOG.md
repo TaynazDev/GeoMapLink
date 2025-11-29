@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project aims to follow
 Semantic Versioning once releases begin.
 
+## [2.5.0] - 2025-11-29
+
+### Added
+- **Experimental Features System**: Flask icon button in dock to toggle experimental features
+  - Confirmation modal with "Are you sure?" prompt before enabling
+  - Currently controls visibility of satellite mode toggle
+  - Automatically disables satellite mode when experimental features are turned off
+- **Apple Liquid Glass Aesthetic**: Complete UI redesign with translucent glass morphism
+  - Search input and city dropdown now use dock-style grey gradient backgrounds
+  - Capsule-shaped inputs with 9999px border-radius for perfect pill shapes
+  - Backdrop blur (25px) with color saturation for depth effect
+  - Inset highlights and shadows for realistic glass appearance
+  - All interactive elements match macOS dock aesthetic
+
+### Changed
+- **Dock Layout**: Reorganized bottom controls for better visual hierarchy
+  - Experimental features (flask) button now centered in dock
+  - Satellite toggle appears in dock next to flask (when experimental features enabled)
+  - All dock buttons use semi-transparent backgrounds with consistent styling
+- **Input Styling**: Search bar and city dropdown completely redesigned
+  - Background: Grey gradient matching dock (rgba(220,220,220,0.65) to rgba(210,210,210,0.55))
+  - Text color: Dark grey (#1a1a1a) for better contrast
+  - Placeholder: Semi-transparent black (40% opacity)
+  - Border: White with 40% opacity
+  - Enhanced inset shadows for depth
+- **Satellite Toggle**: Moved from top-right to dock at bottom
+  - Integrated with experimental features system
+  - Capsule-shaped design (height: 48px)
+  - Appears only when experimental mode is active
+- **Flask Icon**: Reduced stroke width from 2.0 to 1.5 for more delicate appearance
+- **Border Radius**: Increased from 22px to 9999px (capsule shape) for all liquid glass elements
+- **Timezone Lines**: Disabled by default for cleaner map view (UTC clock still visible at top)
+
+### Fixed
+- **Satellite Border Thickness**: Added `vector-effect: non-scaling-stroke` to prevent borders from thickening when zooming
+  - Stroke width changed to 0.5px with consistent appearance at all zoom levels
+- **City Search**: All cities from search results now open properly
+  - Fixed issue where cities not in majorCities array wouldn't open
+  - Uses latitude/longitude data from search results directly
+- **Experimental Features Toggle**: Properly restores regular map view when disabling
+  - Satellite imagery fades out smoothly
+  - Country colors and terrain restored
+  - Ocean opacity returns to normal
+
 ## [2.0.0-beta] - 2025-11-29
 
 ### Added
