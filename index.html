@@ -2348,8 +2348,9 @@
                 const totalSatelliteImages = satelliteOffsets.length;
                 
                 // Use local satellite image with fallbacks
-                const satelliteImageURL = "./satellite.jpg"; // Local image file
-                const fallbackURL = "./satellite.png"; // Alternative format
+                const satelliteImageURL = "./world map full.jpg"; // Local image file
+                const fallbackURL = "./satellite.jpg"; // Alternative name
+                const fallbackURL2 = "./satellite.png"; // Alternative format
                 const remoteFallback = "https://upload.wikimedia.org/wikipedia/commons/5/56/Blue_Marble_2002.png";
                 
                 satelliteOffsets.forEach(offset => {
@@ -2362,11 +2363,15 @@
                     };
                     img.onerror = () => {
                         console.log('Trying fallback satellite image...');
-                        // Try PNG fallback
+                        // Try satellite.jpg fallback
                         img.src = fallbackURL;
                         img.onerror = () => {
-                            console.log('Trying remote fallback...');
-                            img.src = remoteFallback;
+                            console.log('Trying PNG fallback...');
+                            img.src = fallbackURL2;
+                            img.onerror = () => {
+                                console.log('Trying remote fallback...');
+                                img.src = remoteFallback;
+                            };
                         };
                     };
                     img.src = satelliteImageURL;
@@ -2383,8 +2388,19 @@
                     
                     // Handle SVG image load errors with fallbacks
                     svgImage.on("error", function() {
-                        console.log("SVG image failed, trying PNG fallback...");
-                        d3.select(this).attr("xlink:href", fallbackURL);
+                        console.log("SVG image failed, trying alternate names...");
+                        const self = d3.select(this);
+                        self.attr("xlink:href", fallbackURL);
+                        setTimeout(() => {
+                            self.on("error", function() {
+                                d3.select(this).attr("xlink:href", fallbackURL2);
+                                setTimeout(() => {
+                                    d3.select(this).on("error", function() {
+                                        d3.select(this).attr("xlink:href", remoteFallback);
+                                    });
+                                }, 100);
+                            });
+                        }, 100);
                     });
                 });
 
