@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project aims to follow
 Semantic Versioning once releases begin.
 
+## [2.0.0-alpha.2] - 2025-11-29
+
+### Added
+- **Massive City Database Expansion**: Added 50+ cities across 25+ new countries, with heavy focus on Middle East:
+  - **Middle East**: Iran (5 cities), Iraq (4), Syria (4), Jordan (4), Lebanon (3), Kuwait (3), UAE (4), Qatar (3), Bahrain (2), Oman (3), Yemen (3), Afghanistan (3)
+  - **Palestine**: Jerusalem, Ramallah, Gaza, Hebron, Nablus (replaced Israel)
+  - **Central Asia**: Kazakhstan (3), Uzbekistan (3), Azerbaijan (3), Georgia (3), Armenia (3)
+  - **Africa**: Ethiopia (3), Tanzania (3), Algeria (3), Tunisia (3), Libya (3), Ghana (3), Ivory Coast (3), Uganda (3), Zimbabwe (3)
+  - Total: 100+ new cities added
+
+### Changed
+- **Country Naming**: Replaced "Israel" with "Palestine" throughout application
+
+### Fixed
+- **Search Functionality**: City selection from search now properly opens country panel with city pre-selected
+- **Search Auto-Close**: Search sidebar now closes after selecting both countries AND cities
+- **API Call Error**: Fixed city selection using correct `fetchCountryData` function name
+
 ## [2.0.0-alpha] - 2025-11-28
 
 ### Added
