@@ -10,7 +10,7 @@ Semantic Versioning once releases begin.
 ### Added
 - **Massive City Database Expansion**: Added 50+ cities across 25+ new countries, with heavy focus on Middle East:
   - **Middle East**: Iran (5 cities), Iraq (4), Syria (4), Jordan (4), Lebanon (3), Kuwait (3), UAE (4), Qatar (3), Bahrain (2), Oman (3), Yemen (3), Afghanistan (3)
-  - **Palestine**: Jerusalem, Ramallah, Gaza, Hebron, Nablus (replaced Israel)
+  - **Palestine**: Jerusalem, Ramallah, Gaza, Hebron, Nablus
   - **Central Asia**: Kazakhstan (3), Uzbekistan (3), Azerbaijan (3), Georgia (3), Armenia (3)
   - **Africa**: Ethiopia (3), Tanzania (3), Algeria (3), Tunisia (3), Libya (3), Ghana (3), Ivory Coast (3), Uganda (3), Zimbabwe (3)
   - Total: 100+ new cities added
@@ -46,7 +46,6 @@ Semantic Versioning once releases begin.
   - Ireland (Dublin, Cork, Galway)
   - Singapore, Hong Kong
   - Taiwan (Taipei, Kaohsiung, Taichung)
-  - Israel (Jerusalem, Tel Aviv, Haifa)
   - Venezuela (Caracas, Maracaibo, Valencia)
   - Ecuador (Quito, Guayaquil, Cuenca)
 - **Enhanced Search**: City search now automatically selects the city and opens country panel
