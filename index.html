@@ -2353,56 +2353,25 @@
                 const fallbackURL2 = "./satellite.png"; // Alternative format
                 const remoteFallback = "https://upload.wikimedia.org/wikipedia/commons/5/56/Blue_Marble_2002.png";
                 
-                satelliteOffsets.forEach(offset => {
-                    const img = new Image();
-                    img.onload = () => {
-                        satelliteImagesLoaded++;
-                        const progress = 70 + (satelliteImagesLoaded / totalSatelliteImages) * 20;
-                        updateLoadingProgress(progress, `Loading satellite imagery... (${satelliteImagesLoaded}/${totalSatelliteImages})`);
-                        console.log(`Satellite image ${satelliteImagesLoaded}/${totalSatelliteImages} loaded`);
-                    };
-                    img.onerror = () => {
-                        console.log('Trying fallback satellite image...');
-                        // Try satellite.jpg fallback
-                        img.src = fallbackURL;
-                        img.onerror = () => {
-                            console.log('Trying PNG fallback...');
-                            img.src = fallbackURL2;
-                            img.onerror = () => {
-                                console.log('Trying remote fallback...');
-                                img.src = remoteFallback;
-                            };
-                        };
-                    };
-                    img.src = satelliteImageURL;
-                    
-                    const svgImage = satelliteGroup.append("image")
+                console.log('Creating satellite images with URL:', satelliteImageURL);
+                console.log('Image bounds - Width:', imageWidth, 'Height:', imageHeight);
+                console.log('Position - x:', topLeft[0], 'y:', -height * 0.18);
+                
+                satelliteOffsets.forEach((offset, idx) => {
+                    satelliteGroup.append("image")
                         .attr("class", "satellite-bg")
                         .attr("xlink:href", satelliteImageURL)
                         .attr("x", topLeft[0] + offset)
                         .attr("y", -height * 0.18)
                         .attr("width", imageWidth)
                         .attr("height", imageHeight)
-                        .attr("opacity", 0)
-                        .attr("preserveAspectRatio", "none");
+                        .attr("opacity", 0);
                     
-                    // Handle SVG image load errors with fallbacks
-                    svgImage.on("error", function() {
-                        console.log("SVG image failed, trying alternate names...");
-                        const self = d3.select(this);
-                        self.attr("xlink:href", fallbackURL);
-                        setTimeout(() => {
-                            self.on("error", function() {
-                                d3.select(this).attr("xlink:href", fallbackURL2);
-                                setTimeout(() => {
-                                    d3.select(this).on("error", function() {
-                                        d3.select(this).attr("xlink:href", remoteFallback);
-                                    });
-                                }, 100);
-                            });
-                        }, 100);
-                    });
+                    console.log(`Satellite image ${idx + 1}/5 added at x: ${topLeft[0] + offset}`);
                 });
+                
+                updateLoadingProgress(90, 'Satellite images ready');
+                console.log('Total satellite images added:', d3.selectAll('.satellite-bg').size());
 
                 // Function to render countries at a given x offset for wrapping
                 function renderCountries(xOffset = 0) {
