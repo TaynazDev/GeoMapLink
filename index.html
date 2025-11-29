@@ -212,16 +212,23 @@
         .search-input {
             width: 100%;
             padding: 0.75rem;
-            border: none;
-            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
             font-size: 0.9rem;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15),
+                        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
         }
 
         .search-input:focus {
             outline: none;
-            box-shadow: 0 2px 12px rgba(102, 126, 234, 0.3);
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(102, 126, 234, 0.25),
+                        inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
         }
 
         .search-results {
@@ -284,18 +291,24 @@
         .city-dropdown {
             width: 100%;
             padding: 0.75rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
             font-size: 0.9rem;
-            background: white;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15),
+                        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .city-dropdown:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(102, 126, 234, 0.25),
+                        inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
         }
 
         .panel-header {
@@ -2169,10 +2182,16 @@
             // Add event listener to city dropdown
             const cityDropdown = document.getElementById('city-dropdown');
             if (cityDropdown) {
-                cityDropdown.addEventListener('change', async function() {
+                // Remove old listeners
+                const newDropdown = cityDropdown.cloneNode(true);
+                cityDropdown.parentNode.replaceChild(newDropdown, cityDropdown);
+                
+                newDropdown.addEventListener('change', async function() {
                     const selectedIndex = parseInt(this.value);
-                    const selectedCity = cities[selectedIndex];
-                    await showInfoCard(countryData, event, selectedCity);
+                    if (!isNaN(selectedIndex) && cities[selectedIndex]) {
+                        const selectedCity = cities[selectedIndex];
+                        await showInfoCard(countryData, event, selectedCity);
+                    }
                 });
             }
         }
@@ -2469,12 +2488,12 @@
                 renderCountries(mapWidth);
                 renderCountries(mapWidth * 2);
 
-                // Draw time zone lines AFTER countries (so they appear on top) - for all 5 copies
-                await drawTimezoneLines(g, -mapWidth * 2);
-                await drawTimezoneLines(g, -mapWidth);
-                await drawTimezoneLines(g, 0);
-                await drawTimezoneLines(g, mapWidth);
-                await drawTimezoneLines(g, mapWidth * 2);
+                // Timezone lines disabled for cleaner view (UTC time still displayed at bottom)
+                // await drawTimezoneLines(g, -mapWidth * 2);
+                // await drawTimezoneLines(g, -mapWidth);
+                // await drawTimezoneLines(g, 0);
+                // await drawTimezoneLines(g, mapWidth);
+                // await drawTimezoneLines(g, mapWidth * 2);
 
                 // Draw latitude lines AFTER countries (so they appear on top) - for all 5 copies
                 drawLatitudeLines(g, -mapWidth * 2);
