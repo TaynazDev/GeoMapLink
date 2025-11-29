@@ -2347,24 +2347,38 @@
                 let satelliteImagesLoaded = 0;
                 const totalSatelliteImages = satelliteOffsets.length;
                 
+                // Use multiple fallback satellite image sources
+                const satelliteImageURL = "https://upload.wikimedia.org/wikipedia/commons/5/56/Blue_Marble_2002.png";
+                
                 satelliteOffsets.forEach(offset => {
                     const img = new Image();
+                    img.crossOrigin = "anonymous";
                     img.onload = () => {
                         satelliteImagesLoaded++;
                         const progress = 70 + (satelliteImagesLoaded / totalSatelliteImages) * 20;
                         updateLoadingProgress(progress, `Loading satellite imagery... (${satelliteImagesLoaded}/${totalSatelliteImages})`);
+                        console.log(`Satellite image ${satelliteImagesLoaded}/${totalSatelliteImages} loaded`);
                     };
-                    img.src = "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg";
+                    img.onerror = () => {
+                        console.error('Failed to load satellite image');
+                    };
+                    img.src = satelliteImageURL;
                     
                     satelliteGroup.append("image")
                         .attr("class", "satellite-bg")
-                        .attr("xlink:href", "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg")
+                        .attr("xlink:href", satelliteImageURL)
                         .attr("x", topLeft[0] + offset)
                         .attr("y", -height * 0.18)
                         .attr("width", imageWidth)
                         .attr("height", imageHeight)
                         .attr("opacity", 0)
-                        .attr("preserveAspectRatio", "xMidYMid slice");
+                        .attr("preserveAspectRatio", "none")
+                        .on("load", function() {
+                            console.log("SVG image element loaded");
+                        })
+                        .on("error", function() {
+                            console.error("SVG image element failed to load");
+                        });
                 });
 
                 // Function to render countries at a given x offset for wrapping
@@ -2717,7 +2731,21 @@
             satelliteSwitch.classList.toggle('active');
             
             console.log('Satellite mode:', satelliteModeActive);
-            console.log('Satellite images found:', d3.selectAll('.satellite-bg').size());
+            const satImages = d3.selectAll('.satellite-bg');
+            console.log('Satellite images found:', satImages.size());
+            
+            // Debug: log each image's attributes
+            satImages.each(function(d, i) {
+                const img = d3.select(this);
+                console.log(`Image ${i}:`, {
+                    href: img.attr('xlink:href'),
+                    x: img.attr('x'),
+                    y: img.attr('y'),
+                    width: img.attr('width'),
+                    height: img.attr('height'),
+                    opacity: img.attr('opacity')
+                });
+            });
             
             if (satelliteModeActive) {
                 // Show all satellite imagery
