@@ -2917,14 +2917,14 @@
                             const d = d3.select(this).datum();
                             if (d && d.properties && d.properties.name) {
                                 const name = d.properties.name;
-                                return terrainColors[name] || "#2d3748";
+                                return terrainColors[name] || defaultTerrainColor;
                             }
-                            return "#2d3748";
+                            return defaultTerrainColor;
                         })
                         .style("stroke", "#1a1d2e")
                         .style("stroke-width", "0.5")
                         .style("stroke-opacity", 1)
-                        .style("vector-effect", null);
+                        .style("vector-effect", "");
                     
                     d3.selectAll('.country-label')
                         .transition()
@@ -2945,35 +2945,12 @@
             satelliteModeActive = !satelliteModeActive;
             satelliteSwitch.classList.toggle('active');
             
-            console.log('Satellite mode:', satelliteModeActive);
-            const satImages = d3.selectAll('.satellite-bg');
-            console.log('Satellite images found:', satImages.size());
-            
-            // Debug: log each image's attributes
-            satImages.each(function(d, i) {
-                const img = d3.select(this);
-                console.log(`Image ${i}:`, {
-                    href: img.attr('xlink:href'),
-                    x: img.attr('x'),
-                    y: img.attr('y'),
-                    width: img.attr('width'),
-                    height: img.attr('height'),
-                    opacity: img.attr('opacity')
-                });
-            });
-            
             if (satelliteModeActive) {
-                console.log('Activating satellite mode...');
                 // Show all satellite imagery
-                const satImages = d3.selectAll('.satellite-bg');
-                console.log('Found', satImages.size(), 'satellite images to show');
-                satImages
+                d3.selectAll('.satellite-bg')
                     .transition()
                     .duration(500)
-                    .attr("opacity", 1)
-                    .on('end', function() {
-                        console.log('Image opacity set to:', d3.select(this).attr('opacity'));
-                    });
+                    .attr("opacity", 1);
                     
                 if (oceanRect) {
                     oceanRect.transition().duration(500).style("opacity", 0);
@@ -3019,7 +2996,8 @@
                     })
                     .style("stroke", "#1a1d2e")
                     .style("stroke-width", "0.5")
-                    .style("stroke-opacity", 1);
+                    .style("stroke-opacity", 1)
+                    .style("vector-effect", "");
                 
                 d3.selectAll('.country-label')
                     .transition()

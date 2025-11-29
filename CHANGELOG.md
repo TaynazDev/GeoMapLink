@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project aims to follow
 Semantic Versioning once releases begin.
 
+## [2.5.1] - 2025-11-29
+
+### Fixed
+- **Performance**: Removed excessive debug console logging from satellite toggle
+  - Eliminated 5+ console.log statements that were logging on every toggle
+  - Removed redundant variable declarations
+  - Improved toggle responsiveness
+- **Satellite Mode Toggle**: Fixed vector-effect property not resetting properly when disabling satellite mode
+  - Changed from `style("vector-effect", null)` to `style("vector-effect", "")`
+  - Ensures borders return to normal scaling behavior
+- **Terrain Colors**: Fixed inconsistent terrain color fallback references
+  - All color fallbacks now consistently use `defaultTerrainColor` variable
+  - Prevents hardcoded color mismatches throughout the application
+
 ## [2.5.0] - 2025-11-29
 
 ### Added
