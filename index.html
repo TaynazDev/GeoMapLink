@@ -213,7 +213,7 @@
             width: 100%;
             padding: 0.75rem;
             border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 18px;
+            border-radius: 22px;
             font-size: 0.9rem;
             background: rgba(255, 255, 255, 0.72);
             backdrop-filter: blur(20px) saturate(180%);
@@ -292,7 +292,7 @@
             width: 100%;
             padding: 0.75rem;
             border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 18px;
+            border-radius: 22px;
             font-size: 0.9rem;
             background: rgba(255, 255, 255, 0.72);
             backdrop-filter: blur(20px) saturate(180%);
@@ -563,6 +563,121 @@
 
         .satellite-bg.active {
             opacity: 1;
+        }
+
+        .experimental-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, rgba(240, 240, 240, 0.85) 0%, rgba(230, 230, 230, 0.75) 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                inset 0 1px 1px rgba(255, 255, 255, 0.6),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 1001;
+        }
+
+        .experimental-button:hover {
+            background: linear-gradient(135deg, rgba(230, 230, 230, 0.75) 0%, rgba(220, 220, 220, 0.65) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 36px rgba(0, 0, 0, 0.15);
+        }
+
+        .experimental-button:active {
+            transform: translateY(0);
+        }
+
+        .experimental-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .experimental-modal.visible {
+            display: flex;
+        }
+
+        .experimental-modal-content {
+            background: linear-gradient(135deg, rgba(240, 240, 240, 0.95) 0%, rgba(230, 230, 230, 0.90) 100%);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-radius: 22px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .experimental-modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+
+        .experimental-modal-text {
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .experimental-modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .experimental-modal-button {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .experimental-modal-button.yes {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .experimental-modal-button.yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .experimental-modal-button.no {
+            background: rgba(255, 255, 255, 0.5);
+            color: #1a1a1a;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .experimental-modal-button.no:hover {
+            background: rgba(255, 255, 255, 0.7);
+            transform: translateY(-2px);
         }
 
         .utc-time {
@@ -997,12 +1112,36 @@
                 </button>
             </div>
 
+            <!-- Experimental Features Button -->
+            <div class="experimental-button" id="experimental-button" title="Experimental Features">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- Conical flask -->
+                    <path d="M9 3h6"></path>
+                    <path d="M10 3v6.5L6 16c-.5 1-.5 2 0 3h12c.5-1 .5-2 0-3l-4-6.5V3"></path>
+                    <circle cx="12" cy="15" r="1.5" fill="#667eea"></circle>
+                    <circle cx="15" cy="17" r="1" fill="#764ba2"></circle>
+                    <circle cx="9" cy="16.5" r="0.8" fill="#667eea"></circle>
+                </svg>
+            </div>
+
             <!-- Satellite Mode Toggle -->
-            <div class="satellite-toggle" id="satellite-toggle">
+            <div class="satellite-toggle" id="satellite-toggle" style="display: none;">
                 <span class="satellite-toggle-text">Satellite</span>
                 <div class="satellite-toggle-switch" id="satellite-switch">
                     <div class="satellite-toggle-knob"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experimental Features Modal -->
+    <div class="experimental-modal" id="experimental-modal">
+        <div class="experimental-modal-content">
+            <div class="experimental-modal-title">⚗️ Experimental Features</div>
+            <div class="experimental-modal-text">Enable experimental features? This will show advanced options like satellite mode.</div>
+            <div class="experimental-modal-buttons">
+                <button class="experimental-modal-button no" id="experimental-no">No</button>
+                <button class="experimental-modal-button yes" id="experimental-yes">Yes</button>
             </div>
         </div>
     </div>
@@ -2737,6 +2876,72 @@
             }, 300); // Debounce search by 300ms
         });
 
+        // Experimental features functionality
+        let experimentalFeaturesEnabled = false;
+        const experimentalButton = document.getElementById('experimental-button');
+        const experimentalModal = document.getElementById('experimental-modal');
+        const experimentalYes = document.getElementById('experimental-yes');
+        const experimentalNo = document.getElementById('experimental-no');
+
+        experimentalButton.addEventListener('click', () => {
+            experimentalModal.classList.add('visible');
+        });
+
+        experimentalNo.addEventListener('click', () => {
+            experimentalModal.classList.remove('visible');
+        });
+
+        experimentalYes.addEventListener('click', () => {
+            experimentalFeaturesEnabled = !experimentalFeaturesEnabled;
+            
+            if (experimentalFeaturesEnabled) {
+                // Show satellite toggle
+                satelliteToggle.style.display = 'flex';
+            } else {
+                // Hide satellite toggle and turn off satellite mode if active
+                satelliteToggle.style.display = 'none';
+                if (satelliteModeActive) {
+                    // Turn off satellite mode
+                    satelliteModeActive = false;
+                    satelliteSwitch.classList.remove('active');
+                    
+                    // Hide satellite imagery
+                    d3.selectAll('.satellite-bg')
+                        .transition()
+                        .duration(500)
+                        .attr("opacity", 0);
+                        
+                    if (oceanRect) {
+                        oceanRect.transition().duration(500).style("opacity", 1);
+                    }
+                    
+                    // Restore countries
+                    d3.selectAll('.country')
+                        .transition()
+                        .duration(500)
+                        .style("fill", function() {
+                            const d = d3.select(this).datum();
+                            if (d && d.properties && d.properties.name) {
+                                const name = d.properties.name;
+                                return terrainColors[name] || "#2d3748";
+                            }
+                            return "#2d3748";
+                        })
+                        .style("stroke", "#1a1d2e")
+                        .style("stroke-width", "0.5")
+                        .style("stroke-opacity", 1)
+                        .style("vector-effect", null);
+                    
+                    d3.selectAll('.country-label')
+                        .transition()
+                        .duration(500)
+                        .style("opacity", 0.8);
+                }
+            }
+            
+            experimentalModal.classList.remove('visible');
+        });
+
         // Satellite mode toggle functionality
         let satelliteModeActive = false;
         const satelliteToggle = document.getElementById('satellite-toggle');
@@ -2786,8 +2991,9 @@
                     .duration(500)
                     .style("fill", "none")
                     .style("stroke", "#000000")
-                    .style("stroke-width", "1.5")
-                    .style("stroke-opacity", 0.7);
+                    .style("stroke-width", "0.5px")
+                    .style("stroke-opacity", 0.7)
+                    .style("vector-effect", "non-scaling-stroke");
                 
                 // Keep labels visible
                 d3.selectAll('.country-label')
