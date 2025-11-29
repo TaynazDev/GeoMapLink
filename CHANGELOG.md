@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project aims to follow
 Semantic Versioning once releases begin.
 
+## [2.0.0-beta] - 2025-11-29
+
+### Added
+- **Loading Progress Bar**: Real-time loading indicator in splash screen shows map loading progress
+  - Animated progress bar with gradient styling
+  - Status text updates during different loading phases
+  - Progress tracking: Initializing → Loading map data → Processing countries → Rendering map → Ready
+- **Stylized Logo Font**: Changed from Inter to Orbitron for more futuristic, tech-focused aesthetic
+  - Applied to both main logo and splash screen title
+  - Increased letter spacing for better readability
+
+### Changed
+- **Splash Screen Flow**: Map now loads during splash animation instead of after
+  - Minimum splash display time: 2.5 seconds
+  - Splash hides once map is loaded AND minimum time has elapsed
+  - Smoother transition to main application
+- **Logo Typography**: 
+  - Font: Orbitron with weight 700-900
+  - Letter spacing increased from -0.02em to 0.05-0.1em
+  - More cohesive sci-fi/tech aesthetic
+
+### Fixed
+- **Satellite Mode**: Complete rewrite of satellite toggle functionality
+  - Changed from `.style("opacity")` to `.attr("opacity")` for SVG elements
+  - Added null checks for ocean rectangle
+  - Smooth transitions now work correctly
+  - Satellite imagery properly shows/hides with country transparency
+
 ## [2.0.0-alpha.3] - 2025-11-29
 
 ### Added

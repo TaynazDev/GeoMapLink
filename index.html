@@ -6,7 +6,7 @@
     <title>Clickmap - Interactive World Map</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -52,11 +52,11 @@
         .logo h1 {
             color: white;
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 700;
             margin: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Orbitron', sans-serif;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            letter-spacing: -0.02em;
+            letter-spacing: 0.05em;
         }
 
         #map-container {
@@ -756,11 +756,11 @@
         .splash-title {
             color: white;
             font-size: 6rem;
-            font-weight: 700;
+            font-weight: 900;
             margin-top: 1rem;
-            letter-spacing: -0.02em;
+            letter-spacing: 0.1em;
             position: relative;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Orbitron', sans-serif;
             text-shadow: 
                 3px 3px 0px rgba(0, 0, 0, 0.3),
                 5px 5px 10px rgba(0, 0, 0, 0.2),
@@ -861,6 +861,52 @@
             }
         }
 
+        /* Loading Progress Bar */
+        .loading-container {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            z-index: 3;
+            opacity: 0;
+            animation: fadeInProgress 0.6s ease-out 1.5s forwards;
+        }
+
+        @keyframes fadeInProgress {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .loading-bar-bg {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .loading-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: 500;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
     </style>
 </head>
 <body>
@@ -870,6 +916,12 @@
             <div class="splash-logo">🌍</div>
             <h1 class="splash-title">Clickmap</h1>
             <p class="splash-subtitle">Explore the world in real-time</p>
+        </div>
+        <div class="loading-container">
+            <div class="loading-bar-bg">
+                <div class="loading-bar-fill" id="loading-bar"></div>
+            </div>
+            <div class="loading-text" id="loading-text">Loading map data...</div>
         </div>
         <div class="paint-drip"></div>
         <div class="paint-drip"></div>
@@ -960,14 +1012,43 @@
     </div>
 
     <script>
-        // Hide splash screen after animation completes
-        setTimeout(() => {
+        // Loading progress tracking
+        let loadingProgress = 0;
+        const loadingBar = document.getElementById('loading-bar');
+        const loadingText = document.getElementById('loading-text');
+        let isMapLoaded = false;
+
+        function updateLoadingProgress(progress, text) {
+            loadingProgress = Math.min(progress, 100);
+            if (loadingBar) {
+                loadingBar.style.width = loadingProgress + '%';
+            }
+            if (loadingText && text) {
+                loadingText.textContent = text;
+            }
+        }
+
+        // Hide splash screen after map loads or timeout
+        function hideSplash() {
             const splash = document.getElementById('splash');
             splash.classList.add('fade-out');
             setTimeout(() => {
                 splash.style.display = 'none';
             }, 600);
-        }, 2500);
+        }
+
+        // Minimum splash time: 2.5 seconds
+        const minSplashTime = 2500;
+        const splashStartTime = Date.now();
+        
+        function checkSplashReady() {
+            const elapsed = Date.now() - splashStartTime;
+            if (isMapLoaded && elapsed >= minSplashTime) {
+                hideSplash();
+            } else if (isMapLoaded) {
+                setTimeout(hideSplash, minSplashTime - elapsed);
+            }
+        }
 
         // Update UTC time
         function updateUTCTime() {
@@ -2133,11 +2214,14 @@
         async function loadMap() {
             try {
                 // Load world map data from topojson - using 50m for higher detail
+                updateLoadingProgress(30, 'Loading map data...');
                 const world = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json");
+                updateLoadingProgress(50, 'Processing countries...');
                 const countries = topojson.feature(world, world.objects.countries);
 
                 // Remove loading indicator
                 d3.select(".loading").remove();
+                updateLoadingProgress(60, 'Rendering map...');
 
                 // Draw timezone boundaries using real-world timezone data
                 async function drawTimezoneLines(parentGroup, xOffset = 0) {
@@ -2420,10 +2504,18 @@
                         }, 1500);
                     }
                 }
+                
+                // Mark map as fully loaded
+                updateLoadingProgress(100, 'Ready!');
+                isMapLoaded = true;
+                checkSplashReady();
 
             } catch (error) {
                 console.error("Error loading map:", error);
                 d3.select(".loading p").text("Error loading map. Please refresh the page.");
+                updateLoadingProgress(100, 'Error loading map');
+                isMapLoaded = true;
+                checkSplashReady();
             }
         }
 
@@ -2554,10 +2646,9 @@
             });
         }
 
-        // Initialize - delay until splash finishes
-        setTimeout(() => {
-            loadMap();
-        }, 3100); // Splash takes 2500ms + 600ms fade
+        // Initialize - start loading immediately
+        updateLoadingProgress(10, 'Initializing...');
+        loadMap();
 
         // Handle window resize
         window.addEventListener('resize', () => {
@@ -2612,8 +2703,8 @@
             
             if (satelliteModeActive) {
                 // Show all satellite imagery
-                d3.selectAll('.satellite-bg').transition().duration(500).style("opacity", 1);
-                oceanRect.transition().duration(500).style("opacity", 0);
+                d3.selectAll('.satellite-bg').transition().duration(500).attr("opacity", 1);
+                if (oceanRect) oceanRect.transition().duration(500).style("opacity", 0);
                 // Make countries slightly transparent to show satellite underneath
                 d3.selectAll('.country')
                     .transition()
@@ -2628,8 +2719,8 @@
                     .style("opacity", 1);
             } else {
                 // Hide all satellite imagery
-                d3.selectAll('.satellite-bg').transition().duration(500).style("opacity", 0);
-                oceanRect.transition().duration(500).style("opacity", 1);
+                d3.selectAll('.satellite-bg').transition().duration(500).attr("opacity", 0);
+                if (oceanRect) oceanRect.transition().duration(500).style("opacity", 1);
                 // Return countries to normal opacity
                 d3.selectAll('.country')
                     .transition()
