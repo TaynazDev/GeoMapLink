@@ -2339,8 +2339,20 @@
                 actualMapWidth = mapWidth; // Store for zoom handler
 
                 // Add satellite images first (so they appear behind countries)
+                updateLoadingProgress(70, 'Loading satellite imagery...');
                 const satelliteOffsets = [-mapWidth * 2, -mapWidth, 0, mapWidth, mapWidth * 2];
+                let satelliteImagesLoaded = 0;
+                const totalSatelliteImages = satelliteOffsets.length;
+                
                 satelliteOffsets.forEach(offset => {
+                    const img = new Image();
+                    img.onload = () => {
+                        satelliteImagesLoaded++;
+                        const progress = 70 + (satelliteImagesLoaded / totalSatelliteImages) * 20;
+                        updateLoadingProgress(progress, `Loading satellite imagery... (${satelliteImagesLoaded}/${totalSatelliteImages})`);
+                    };
+                    img.src = "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg";
+                    
                     g.append("image")
                         .attr("class", "satellite-bg")
                         .attr("href", "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg")
@@ -2348,7 +2360,7 @@
                         .attr("y", -height * 0.18)
                         .attr("width", imageWidth)
                         .attr("height", imageHeight)
-                        .style("opacity", 0)
+                        .attr("opacity", 0)
                         .lower(); // Ensure satellite images are behind everything
                 });
 
