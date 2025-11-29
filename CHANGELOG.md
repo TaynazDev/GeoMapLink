@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project aims to follow
 Semantic Versioning once releases begin.
 
+## [2.0.0-alpha.3] - 2025-11-29
+
+### Added
+- **100 Additional Cities**: Comprehensive expansion across 40 new countries:
+  - **South America**: Bolivia (4), Paraguay (3), Uruguay (3) - 10 cities
+  - **Central America**: Costa Rica (3), Panama (3), Nicaragua (3), Honduras (3), El Salvador (3), Guatemala (3) - 18 cities
+  - **Caribbean**: Cuba (4), Dominican Republic (3), Jamaica (3), Trinidad and Tobago (3) - 13 cities
+  - **South Asia**: Nepal (3), Sri Lanka (4) - 7 cities
+  - **Southeast Asia**: Cambodia (3), Laos (3), Myanmar (4) - 10 cities
+  - **East Asia**: Mongolia (3), North Korea (3) - 6 cities
+  - **Central Asia**: Turkmenistan (3), Kyrgyzstan (3), Tajikistan (3) - 9 cities
+  - **Africa**: Senegal (3), Cameroon (3), Angola (3), Mozambique (3), Madagascar (3), Zambia (3), Malawi (3), Rwanda (3), Burundi (3), Somalia (3), Sudan (3) - 33 cities
+  - **Total**: 106 new cities across 40 countries
+
 ## [2.0.0-alpha.2] - 2025-11-29
 
 ### Added
