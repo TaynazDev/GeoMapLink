@@ -35,9 +35,13 @@ https://taynazdev.github.io/GeoMapLink/
 - **Responsive design** optimized for all screen sizes
 
 ### Geographic Features
+- **Satellite mode toggle**: Switch between map view and satellite imagery
+  - 5 seamless satellite image copies for infinite scrolling
+  - Local image file support (`satellite.jpg` or `satellite.png`)
+  - Automatic fallback to remote sources if local file not found
 - **Geographic reference lines**: Equator, Tropics, Arctic/Antarctic Circles
 - **Timezone meridian lines** with UTC offset labels
-- **Animated splash screen** with paint splash effect
+- **Animated splash screen** with paint splash effect and loading progress bar
 - **Palestine mapping** (replaces Israel throughout application)
 
 ## Quick Start
@@ -45,9 +49,12 @@ https://taynazdev.github.io/GeoMapLink/
 You only need a browser and an internet connection (CDNs are used).
 
 1. Clone or download this repo
-2. Open `index.html` in your browser
+2. **For satellite mode**: Add a `satellite.jpg` or `satellite.png` file to the root directory
+   - Use an equirectangular projection image (like Blue Marble)
+   - Recommended: 5400x2700 resolution or higher
+3. Open `index.html` in your browser
 
-That’s it. No build step required.
+That's it. No build step required.
 
 ## Project Structure
 

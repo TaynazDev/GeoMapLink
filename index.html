@@ -2347,12 +2347,13 @@
                 let satelliteImagesLoaded = 0;
                 const totalSatelliteImages = satelliteOffsets.length;
                 
-                // Use multiple fallback satellite image sources
-                const satelliteImageURL = "https://upload.wikimedia.org/wikipedia/commons/5/56/Blue_Marble_2002.png";
+                // Use local satellite image with fallbacks
+                const satelliteImageURL = "./satellite.jpg"; // Local image file
+                const fallbackURL = "./satellite.png"; // Alternative format
+                const remoteFallback = "https://upload.wikimedia.org/wikipedia/commons/5/56/Blue_Marble_2002.png";
                 
                 satelliteOffsets.forEach(offset => {
                     const img = new Image();
-                    img.crossOrigin = "anonymous";
                     img.onload = () => {
                         satelliteImagesLoaded++;
                         const progress = 70 + (satelliteImagesLoaded / totalSatelliteImages) * 20;
@@ -2360,11 +2361,17 @@
                         console.log(`Satellite image ${satelliteImagesLoaded}/${totalSatelliteImages} loaded`);
                     };
                     img.onerror = () => {
-                        console.error('Failed to load satellite image');
+                        console.log('Trying fallback satellite image...');
+                        // Try PNG fallback
+                        img.src = fallbackURL;
+                        img.onerror = () => {
+                            console.log('Trying remote fallback...');
+                            img.src = remoteFallback;
+                        };
                     };
                     img.src = satelliteImageURL;
                     
-                    satelliteGroup.append("image")
+                    const svgImage = satelliteGroup.append("image")
                         .attr("class", "satellite-bg")
                         .attr("xlink:href", satelliteImageURL)
                         .attr("x", topLeft[0] + offset)
@@ -2372,13 +2379,13 @@
                         .attr("width", imageWidth)
                         .attr("height", imageHeight)
                         .attr("opacity", 0)
-                        .attr("preserveAspectRatio", "none")
-                        .on("load", function() {
-                            console.log("SVG image element loaded");
-                        })
-                        .on("error", function() {
-                            console.error("SVG image element failed to load");
-                        });
+                        .attr("preserveAspectRatio", "none");
+                    
+                    // Handle SVG image load errors with fallbacks
+                    svgImage.on("error", function() {
+                        console.log("SVG image failed, trying PNG fallback...");
+                        d3.select(this).attr("xlink:href", fallbackURL);
+                    });
                 });
 
                 // Function to render countries at a given x offset for wrapping
