@@ -2740,11 +2740,17 @@
             });
             
             if (satelliteModeActive) {
+                console.log('Activating satellite mode...');
                 // Show all satellite imagery
-                d3.selectAll('.satellite-bg')
+                const satImages = d3.selectAll('.satellite-bg');
+                console.log('Found', satImages.size(), 'satellite images to show');
+                satImages
                     .transition()
                     .duration(500)
-                    .attr("opacity", 1);
+                    .attr("opacity", 1)
+                    .on('end', function() {
+                        console.log('Image opacity set to:', d3.select(this).attr('opacity'));
+                    });
                     
                 if (oceanRect) {
                     oceanRect.transition().duration(500).style("opacity", 0);
@@ -2755,9 +2761,9 @@
                     .transition()
                     .duration(500)
                     .style("fill", "none")
-                    .style("stroke", "#ffffff")
-                    .style("stroke-width", "0.5")
-                    .style("stroke-opacity", 0.4);
+                    .style("stroke", "#000000")
+                    .style("stroke-width", "1.5")
+                    .style("stroke-opacity", 0.7);
                 
                 // Keep labels visible
                 d3.selectAll('.country-label')
