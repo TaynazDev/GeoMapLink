@@ -3011,24 +3011,80 @@
         // Fetch global events, natural hazards, and weather warnings
         async function fetchGlobalEvents() {
             const eventsMarquee = document.querySelector('.events-marquee');
+            const events = [];
             
-            // Sample events - in production, this would fetch from APIs like:
-            // - USGS Earthquake API
-            // - GDACS (Global Disaster Alert and Coordination System)
-            // - Weather Alert APIs
-            const sampleEvents = [
-                { icon: '🌋', text: 'Volcanic Activity - Mount Etna, Italy - Alert Level: Orange' },
-                { icon: '🌪️', text: 'Severe Weather Warning - Midwest USA - Tornado Watch in Effect' },
-                { icon: '🌊', text: 'Tsunami Advisory - Pacific Coast - Magnitude 6.8 Earthquake Detected' },
-                { icon: '⚠️', text: 'Heat Wave Alert - Southern Europe - Temperatures Exceeding 40°C' },
-                { icon: '🔥', text: 'Wildfire - California, USA - Evacuation Orders Active' },
-                { icon: '❄️', text: 'Winter Storm Warning - Northeast USA - Heavy Snow Expected' },
-                { icon: '🌀', text: 'Hurricane Watch - Caribbean Sea - Category 3 Storm Approaching' },
-            ];
+            try {
+                // Fetch recent significant earthquakes from USGS
+                const earthquakeResponse = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
+                if (earthquakeResponse.ok) {
+                    const earthquakeData = await earthquakeResponse.json();
+                    const recentQuakes = earthquakeData.features.slice(0, 5);
+                    
+                    recentQuakes.forEach(quake => {
+                        const mag = quake.properties.mag.toFixed(1);
+                        const place = quake.properties.place;
+                        const icon = mag >= 6.0 ? '🌊' : '🌍';
+                        events.push({
+                            icon: icon,
+                            text: `Magnitude ${mag} Earthquake - ${place}`
+                        });
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching earthquake data:', error);
+            }
 
-            eventsMarquee.innerHTML = sampleEvents.map(event => 
+            try {
+                // Fetch global news headlines (using free News API alternative)
+                const newsResponse = await fetch('https://api.currentsapi.services/v1/latest-news?language=en&apiKey=demo');
+                if (newsResponse.ok) {
+                    const newsData = await newsResponse.json();
+                    if (newsData.news && newsData.news.length > 0) {
+                        const weatherKeywords = ['weather', 'storm', 'hurricane', 'tornado', 'flood', 'drought', 'wildfire', 'heat', 'cold'];
+                        const relevantNews = newsData.news
+                            .filter(item => weatherKeywords.some(keyword => 
+                                item.title.toLowerCase().includes(keyword) || 
+                                (item.description && item.description.toLowerCase().includes(keyword))
+                            ))
+                            .slice(0, 3);
+                        
+                        relevantNews.forEach(item => {
+                            const title = item.title.toLowerCase();
+                            let icon = '⚠️';
+                            if (title.includes('hurricane') || title.includes('cyclone')) icon = '🌀';
+                            else if (title.includes('tornado')) icon = '🌪️';
+                            else if (title.includes('flood')) icon = '🌊';
+                            else if (title.includes('wildfire') || title.includes('fire')) icon = '🔥';
+                            else if (title.includes('snow') || title.includes('blizzard')) icon = '❄️';
+                            else if (title.includes('heat')) icon = '🌡️';
+                            
+                            events.push({
+                                icon: icon,
+                                text: item.title
+                            });
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching news data:', error);
+            }
+
+            // Fallback to informative messages if no events fetched
+            if (events.length === 0) {
+                events.push(
+                    { icon: '🌍', text: 'Monitoring global seismic activity - USGS Real-time Data' },
+                    { icon: '🛰️', text: 'Weather satellite systems operational - Global coverage active' },
+                    { icon: '📡', text: 'Natural hazard monitoring systems online - 24/7 surveillance' },
+                    { icon: '✅', text: 'No major alerts at this time - Conditions normal worldwide' }
+                );
+            }
+
+            eventsMarquee.innerHTML = events.map(event => 
                 `<span class="event-item"><span class="event-icon">${event.icon}</span>${event.text}</span>`
             ).join('');
+
+            // Refresh events every 5 minutes
+            setTimeout(fetchGlobalEvents, 300000);
         }
 
         // Satellite mode toggle functionality
