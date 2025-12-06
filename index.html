@@ -3123,7 +3123,7 @@
                 const earthquakeResponse = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
                 if (earthquakeResponse.ok) {
                     const earthquakeData = await earthquakeResponse.json();
-                    const recentQuakes = earthquakeData.features.slice(0, 5);
+                    const recentQuakes = earthquakeData.features.slice(0, 8);
                     
                     recentQuakes.forEach(quake => {
                         const mag = quake.properties.mag.toFixed(1);
@@ -3151,18 +3151,24 @@
                     const xmlDoc = parser.parseFromString(gdacsText, 'text/xml');
                     const items = xmlDoc.querySelectorAll('item');
                     
-                    Array.from(items).slice(0, 5).forEach(item => {
+                    Array.from(items).slice(0, 8).forEach(item => {
                         const title = item.querySelector('title')?.textContent || '';
                         const description = item.querySelector('description')?.textContent || '';
                         
                         let icon = '⚠️';
                         const titleLower = title.toLowerCase();
                         if (titleLower.includes('cyclone') || titleLower.includes('hurricane') || titleLower.includes('typhoon')) icon = '🌀';
+                        else if (titleLower.includes('tropical storm') || titleLower.includes('storm')) icon = '⛈️';
+                        else if (titleLower.includes('tornado')) icon = '🌪️';
                         else if (titleLower.includes('flood')) icon = '🌊';
                         else if (titleLower.includes('drought')) icon = '🌵';
                         else if (titleLower.includes('volcano')) icon = '🌋';
                         else if (titleLower.includes('wildfire') || titleLower.includes('fire')) icon = '🔥';
                         else if (titleLower.includes('earthquake')) icon = '🌍';
+                        else if (titleLower.includes('tsunami')) icon = '🌊';
+                        else if (titleLower.includes('heat') || titleLower.includes('heatwave')) icon = '🌡️';
+                        else if (titleLower.includes('cold') || titleLower.includes('freeze') || titleLower.includes('snow') || titleLower.includes('blizzard')) icon = '❄️';
+                        else if (titleLower.includes('landslide') || titleLower.includes('avalanche')) icon = '⛰️';
                         
                         if (title && !title.includes('Test')) {
                             events.push({ icon: icon, text: title });
@@ -3173,18 +3179,12 @@
                 console.error('Error fetching GDACS data:', error);
             }
 
-            try {
-                // Fetch weather alerts from Open-Meteo Air Quality API (Free, no key)
-                const weatherAlertsResponse = await fetch('https://api.open-meteo.com/v1/forecast?latitude=40.7128&longitude=-74.0060&current=temperature_2m&hourly=temperature_2m');
-                // Note: Open-Meteo doesn't have alerts, but we keep earthquake focus
-            } catch (error) {
-                console.error('Error fetching weather data:', error);
-            }
-
-            // Add some general monitoring status messages
+            // Add monitoring status and general weather warnings
             if (events.length > 0) {
                 events.push(
-                    { icon: '🛰️', text: 'Live monitoring via USGS & GDACS - Updated every 5 minutes' }
+                    { icon: '🛰️', text: 'Live global monitoring via USGS & GDACS' },
+                    { icon: '📡', text: 'Real-time disaster alerts from international networks' },
+                    { icon: '🌐', text: 'Data updated every 5 minutes' }
                 );
             }
 
@@ -3194,13 +3194,21 @@
                     { icon: '✅', text: 'No major seismic activity detected in the last 24 hours' },
                     { icon: '🌍', text: 'Global earthquake monitoring active - USGS Real-time Feed' },
                     { icon: '🛰️', text: 'Disaster alert systems operational - GDACS International Network' },
-                    { icon: '📡', text: 'Natural hazard surveillance systems online - Worldwide coverage' }
+                    { icon: '⚠️', text: 'Natural hazard surveillance systems online - Worldwide coverage' },
+                    { icon: '🌀', text: 'Tropical cyclone tracking active - Global coverage' },
+                    { icon: '🔥', text: 'Wildfire monitoring systems operational' },
+                    { icon: '🌊', text: 'Flood warning networks active' },
+                    { icon: '❄️', text: 'Severe weather monitoring ongoing' }
                 );
             }
 
-            eventsMarquee.innerHTML = events.map(event => 
+            // Duplicate events for continuous scrolling (so it never runs out)
+            const eventHTML = events.map(event => 
                 `<span class="event-item"><span class="event-icon">${event.icon}</span>${event.text}</span>`
             ).join('');
+            
+            // Add the content 3 times to ensure continuous loop without gaps
+            eventsMarquee.innerHTML = eventHTML + eventHTML + eventHTML;
 
             // Refresh events every 5 minutes
             setTimeout(fetchGlobalEvents, 300000);
