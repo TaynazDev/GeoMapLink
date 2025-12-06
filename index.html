@@ -3262,10 +3262,29 @@
             satelliteToggle.style.display = 'flex';
             // Show history button
             historyButton.style.display = 'flex';
-            // Show events bar
+            // Show events bar immediately with loading message
             eventsBar.classList.add('visible');
-            // Fetch and display events
+            showInitialEvents();
+            // Fetch and display real events in background
             fetchGlobalEvents();
+        }
+
+        function showInitialEvents() {
+            const eventsMarquee = document.querySelector('.events-marquee');
+            const initialEvents = [
+                { icon: '🛰️', text: 'Initializing global monitoring systems...' },
+                { icon: '🌍', text: 'Connecting to USGS Earthquake Feed' },
+                { icon: '🌐', text: 'Connecting to GDACS Disaster Alert Network' },
+                { icon: '📡', text: 'Loading real-time data from international sources' },
+                { icon: '⚡', text: 'Stand by for live updates' }
+            ];
+            
+            const eventHTML = initialEvents.map(event => 
+                `<span class="event-item"><span class="event-icon">${event.icon}</span>${event.text}</span>`
+            ).join('');
+            
+            // Triple the content for continuous scrolling
+            eventsMarquee.innerHTML = eventHTML + eventHTML + eventHTML;
         }
 
         function disableExperimentalFeatures() {
