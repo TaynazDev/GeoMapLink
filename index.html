@@ -685,7 +685,7 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
+            transform: translate(-50%, -50%);
             background: white;
             border-radius: 12px;
             padding: 2rem;
@@ -695,12 +695,10 @@
             max-width: 500px;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.3s ease;
         }
 
         .retro-card.visible {
             opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
             pointer-events: auto;
         }
 
@@ -916,7 +914,7 @@
             display: flex;
             align-items: center;
             white-space: nowrap;
-            animation: scroll-left 60s linear infinite;
+            animation: scroll-left 150s linear infinite;
             gap: 3rem;
         }
 
@@ -3393,7 +3391,14 @@
                 events.push(
                     { icon: '🛰️', text: 'Live global monitoring via USGS & GDACS' },
                     { icon: '📡', text: 'Real-time disaster alerts from international networks' },
-                    { icon: '🌐', text: 'Data updated every 5 minutes' }
+                    { icon: '🌐', text: 'Data updated every 5 minutes' },
+                    { icon: '🌎', text: 'Monitoring 195 countries worldwide' },
+                    { icon: '⚡', text: 'Lightning detection networks active' },
+                    { icon: '🌊', text: 'Tsunami warning systems operational' },
+                    { icon: '🌋', text: 'Volcanic activity surveillance - 1500+ volcanoes tracked' },
+                    { icon: '🌪️', text: 'Tornado watch systems active across North America' },
+                    { icon: '🌡️', text: 'Global temperature monitoring - Climate analysis systems online' },
+                    { icon: '💨', text: 'Wind speed tracking - Hurricane prediction models running' }
                 );
             }
 
@@ -3407,7 +3412,15 @@
                     { icon: '🌀', text: 'Tropical cyclone tracking active - Global coverage' },
                     { icon: '🔥', text: 'Wildfire monitoring systems operational' },
                     { icon: '🌊', text: 'Flood warning networks active' },
-                    { icon: '❄️', text: 'Severe weather monitoring ongoing' }
+                    { icon: '❄️', text: 'Severe weather monitoring ongoing' },
+                    { icon: '🌡️', text: 'Heat advisory systems operational in 50+ countries' },
+                    { icon: '💧', text: 'Precipitation tracking - Rainfall radar networks active' },
+                    { icon: '⛈️', text: 'Thunderstorm detection systems online' },
+                    { icon: '🌫️', text: 'Air quality monitoring - Pollution index tracking worldwide' },
+                    { icon: '🌬️', text: 'Wind shear analysis for aviation safety ongoing' },
+                    { icon: '⛰️', text: 'Landslide prediction models active in mountainous regions' },
+                    { icon: '🌨️', text: 'Snowstorm tracking - Winter weather advisories ready' },
+                    { icon: '🌤️', text: 'Solar radiation monitoring - UV index tracking global' }
                 );
             }
 

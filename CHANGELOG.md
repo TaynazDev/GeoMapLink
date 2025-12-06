@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project aims to follow
 Semantic Versioning once releases begin.
 
+## [3.0.0-beta] - 2025-12-06
+
+### Added
+- **Experimental Features System**: Major feature flag system for beta testing
+  - Real-time events/warnings bar with scrolling alerts from USGS & GDACS APIs
+  - Live earthquake monitoring (magnitude 4.5+, last 24 hours)
+  - Global disaster alerts (cyclones, floods, wildfires, volcanoes, etc.)
+  - Comprehensive weather warnings with 25+ event type icons
+  - Auto-refresh every 5 minutes with international data feeds
+  - Continuous scrolling marquee (tripled content for seamless loop)
+- **V0.1.0 Retro Mode**: Classic view toggle for nostalgia
+  - History button in bottom-right corner (clock icon)
+  - Purple gradient background matching original v0.1.0 design
+  - Simple white countries with purple hover states
+  - Instant popup cards when clicking countries (no transitions)
+  - Classic modal design with flag, country info (capital, population, area, languages, currency)
+  - Hides all modern UI elements (dock, panels, labels, events bar)
+- **Enhanced Events Bar**: Massively expanded content and slower scroll speed
+  - Slowed animation to 150s (2.5 minutes for full loop) for better readability
+  - Added 25+ diverse monitoring status messages
+  - Lightning detection, tsunami warnings, volcanic activity surveillance
+  - Tornado watch systems, temperature monitoring, wind speed tracking
+  - Air quality monitoring, precipitation tracking, UV index updates
+  - 16+ unique event types with smart icon detection
+
+### Changed
+- **History Button Location**: Moved from dock to fixed bottom-right corner
+  - 56x56px circular button with liquid glass styling
+  - Independent positioning allows it to persist when dock is hidden
+  - Shows/hides automatically with experimental features toggle
+- **Events Bar Performance**: Optimized for continuous viewing
+  - Increased event count from 5 to 8 per API source (16 total possible)
+  - Content tripled to ensure no gaps in scrolling animation
+  - Added comprehensive fallback messages when no active disasters
+- **Retro Mode UX**: Instant card appearance for better responsiveness
+  - Removed all transitions from popup cards (was 0.3s delay)
+  - Cards now appear immediately on country click
+  - Backdrop click and close button for dismissal
+  - Auto-cleanup when switching between modes
+
+### Fixed
+- **Mode Switching**: Clean transitions between modern and retro views
+  - Side panel automatically hides when entering retro mode
+  - Retro card automatically hides when returning to modern mode
+  - Dock visibility properly toggled in retro mode
+
 ## [2.5.1] - 2025-11-29
 
 ### Fixed
