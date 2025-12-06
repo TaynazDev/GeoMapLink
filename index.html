@@ -591,6 +591,81 @@
             transform: translateY(0);
         }
 
+        .history-button {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .history-button:hover {
+            background: linear-gradient(135deg, rgba(230, 230, 230, 0.75) 0%, rgba(220, 220, 220, 0.65) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 36px rgba(0, 0, 0, 0.15);
+        }
+
+        .history-button:active {
+            transform: translateY(0);
+        }
+
+        /* V0.1.0 Retro Mode Styling */
+        body.retro-mode {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.retro-mode .top-gradient,
+        body.retro-mode .utc-time,
+        body.retro-mode .events-bar {
+            display: none !important;
+        }
+
+        body.retro-mode .info-panel {
+            display: none !important;
+        }
+
+        body.retro-mode #map-container {
+            margin: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        body.retro-mode .logo {
+            top: 30px;
+        }
+
+        body.retro-mode .logo h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        body.retro-mode .controls {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        body.retro-mode .country {
+            fill: white !important;
+        }
+
+        body.retro-mode .country:hover {
+            fill: #667eea !important;
+        }
+
+        body.retro-mode .country.active {
+            fill: #667eea !important;
+        }
+
+        body.retro-mode .country-label {
+            display: none !important;
+        }
+
         .experimental-modal {
             position: fixed;
             top: 0;
@@ -1168,6 +1243,14 @@
                         <circle cx="12" cy="15" r="1.5" fill="#667eea"></circle>
                         <circle cx="15" cy="17" r="1" fill="#764ba2"></circle>
                         <circle cx="9" cy="16.5" r="0.8" fill="#667eea"></circle>
+                    </svg>
+                </button>
+                
+                <!-- History Button (V0.1.0 Mode) -->
+                <button class="history-button" id="history-button" title="Toggle V0.1.0 Classic View">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
                 </button>
                 
@@ -2956,6 +3039,8 @@
             experimentalFeaturesEnabled = true;
             // Show satellite toggle
             satelliteToggle.style.display = 'flex';
+            // Show history button
+            historyButton.style.display = 'flex';
             // Show events bar
             eventsBar.classList.add('visible');
             // Fetch and display events
@@ -2966,6 +3051,12 @@
             experimentalFeaturesEnabled = false;
             // Hide satellite toggle
             satelliteToggle.style.display = 'none';
+            // Hide history button
+            historyButton.style.display = 'none';
+            // Disable retro mode if active
+            if (document.body.classList.contains('retro-mode')) {
+                document.body.classList.remove('retro-mode');
+            }
             // Hide events bar
             eventsBar.classList.remove('visible');
             
@@ -3100,6 +3191,22 @@
             // Refresh events every 5 minutes
             setTimeout(fetchGlobalEvents, 300000);
         }
+
+        // History button functionality (V0.1.0 retro mode)
+        const historyButton = document.getElementById('history-button');
+        let retroModeActive = false;
+
+        historyButton.addEventListener('click', () => {
+            retroModeActive = !retroModeActive;
+            
+            if (retroModeActive) {
+                // Enable V0.1.0 retro styling
+                document.body.classList.add('retro-mode');
+            } else {
+                // Return to current version
+                document.body.classList.remove('retro-mode');
+            }
+        });
 
         // Satellite mode toggle functionality
         let satelliteModeActive = false;
