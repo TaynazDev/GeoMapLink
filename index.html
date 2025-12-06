@@ -680,6 +680,120 @@
             display: none !important;
         }
 
+        /* Retro Mode Popup Card */
+        .retro-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            min-width: 400px;
+            max-width: 500px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .retro-card.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .retro-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .retro-card-flag {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .retro-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .retro-card-info {
+            display: grid;
+            gap: 1rem;
+            color: #1a1a1a;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .retro-card-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .retro-card-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .retro-card-value {
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+
+        .retro-card-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #667eea;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .retro-card-close:hover {
+            background: #764ba2;
+            transform: scale(1.1);
+        }
+
+        .retro-card-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .retro-card-backdrop.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         .experimental-modal {
             position: fixed;
             top: 0;
@@ -802,7 +916,7 @@
             display: flex;
             align-items: center;
             white-space: nowrap;
-            animation: scroll-left 30s linear infinite;
+            animation: scroll-left 60s linear infinite;
             gap: 3rem;
         }
 
@@ -1288,6 +1402,19 @@
                 <button class="experimental-modal-button no" id="experimental-no">No</button>
                 <button class="experimental-modal-button yes" id="experimental-yes">Yes</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Retro Mode Popup Card -->
+    <div class="retro-card-backdrop" id="retro-card-backdrop"></div>
+    <div class="retro-card" id="retro-card">
+        <button class="retro-card-close" id="retro-card-close">×</button>
+        <div class="retro-card-header">
+            <img class="retro-card-flag" id="retro-flag" src="" alt="Flag">
+            <div class="retro-card-title" id="retro-country-name"></div>
+        </div>
+        <div class="retro-card-info" id="retro-card-info">
+            <!-- Dynamic content will be inserted here -->
         </div>
     </div>
 
@@ -2493,24 +2620,106 @@
             const countryName = d.properties.name;
             const countryElement = event.currentTarget;
 
-            // If clicking the same country, hide it
-            if (activeCountry === countryElement) {
-                hideInfoCard();
-                return;
+            // Check if retro mode is active
+            const isRetroMode = document.body.classList.contains('retro-mode');
+
+            if (isRetroMode) {
+                // In retro mode, show popup card
+                showRetroCard(countryName);
+            } else {
+                // Modern mode - use side panel
+                // If clicking the same country, hide it
+                if (activeCountry === countryElement) {
+                    hideInfoCard();
+                    return;
+                }
+
+                // Remove active class from previous country
+                if (activeCountry && activeCountry !== countryElement) {
+                    d3.select(activeCountry).classed('active', false);
+                }
+
+                // Set new active country
+                activeCountry = countryElement;
+                d3.select(countryElement).classed('active', true);
+
+                // Fetch and show country data
+                const countryData = await fetchCountryData(countryName);
+                showInfoCard(countryData, event);
             }
+        }
 
-            // Remove active class from previous country
-            if (activeCountry && activeCountry !== countryElement) {
-                d3.select(activeCountry).classed('active', false);
-            }
+        // Show retro mode popup card
+        async function showRetroCard(countryName) {
+            const retroCard = document.getElementById('retro-card');
+            const retroBackdrop = document.getElementById('retro-card-backdrop');
+            const retroFlag = document.getElementById('retro-flag');
+            const retroCountryName = document.getElementById('retro-country-name');
+            const retroCardInfo = document.getElementById('retro-card-info');
 
-            // Set new active country
-            activeCountry = countryElement;
-            d3.select(countryElement).classed('active', true);
-
-            // Fetch and show country data
+            // Fetch country data
             const countryData = await fetchCountryData(countryName);
-            showInfoCard(countryData, event);
+
+            // Populate card
+            retroFlag.src = countryData.flag;
+            retroCountryName.textContent = countryData.name;
+
+            // Build info rows
+            let infoHTML = '';
+            if (countryData.capital) {
+                infoHTML += `
+                    <div class="retro-card-row">
+                        <span class="retro-card-label">Capital:</span>
+                        <span class="retro-card-value">${countryData.capital}</span>
+                    </div>
+                `;
+            }
+            if (countryData.population) {
+                infoHTML += `
+                    <div class="retro-card-row">
+                        <span class="retro-card-label">Population:</span>
+                        <span class="retro-card-value">${countryData.population.toLocaleString()}</span>
+                    </div>
+                `;
+            }
+            if (countryData.area) {
+                infoHTML += `
+                    <div class="retro-card-row">
+                        <span class="retro-card-label">Area:</span>
+                        <span class="retro-card-value">${countryData.area.toLocaleString()} km²</span>
+                    </div>
+                `;
+            }
+            if (countryData.languages && countryData.languages.length > 0) {
+                infoHTML += `
+                    <div class="retro-card-row">
+                        <span class="retro-card-label">Languages:</span>
+                        <span class="retro-card-value">${countryData.languages.join(', ')}</span>
+                    </div>
+                `;
+            }
+            if (countryData.currencies && countryData.currencies.length > 0) {
+                infoHTML += `
+                    <div class="retro-card-row">
+                        <span class="retro-card-label">Currency:</span>
+                        <span class="retro-card-value">${countryData.currencies.join(', ')}</span>
+                    </div>
+                `;
+            }
+
+            retroCardInfo.innerHTML = infoHTML;
+
+            // Show card and backdrop
+            retroBackdrop.classList.add('visible');
+            retroCard.classList.add('visible');
+        }
+
+        // Hide retro card
+        function hideRetroCard() {
+            const retroCard = document.getElementById('retro-card');
+            const retroBackdrop = document.getElementById('retro-card-backdrop');
+            retroCard.classList.remove('visible');
+            retroBackdrop.classList.remove('visible');
         }
 
         // Load and render the map
@@ -3214,6 +3423,10 @@
             setTimeout(fetchGlobalEvents, 300000);
         }
 
+        // Retro card close button listeners
+        document.getElementById('retro-card-close').addEventListener('click', hideRetroCard);
+        document.getElementById('retro-card-backdrop').addEventListener('click', hideRetroCard);
+
         // History button functionality (V0.1.0 retro mode)
         const historyButton = document.getElementById('history-button');
         let retroModeActive = false;
@@ -3224,9 +3437,13 @@
             if (retroModeActive) {
                 // Enable V0.1.0 retro styling
                 document.body.classList.add('retro-mode');
+                // Hide side panel if open
+                hideInfoCard();
             } else {
                 // Return to current version
                 document.body.classList.remove('retro-mode');
+                // Hide retro card if open
+                hideRetroCard();
             }
         });
 
