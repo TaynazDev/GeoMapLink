@@ -687,6 +687,55 @@
             pointer-events: none;
         }
 
+        .events-bar {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(220, 50, 50, 0.9) 0%, rgba(180, 40, 40, 0.85) 100%);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .events-bar.visible {
+            display: flex;
+        }
+
+        .events-marquee {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            animation: scroll-left 30s linear infinite;
+            gap: 3rem;
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .event-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .event-icon {
+            font-size: 1.2rem;
+        }
+
         .control-btn {
             background: transparent;
             border: none;
@@ -1056,6 +1105,11 @@
         <h1>🌍 Clickmap</h1>
     </div>
     <div class="utc-time" id="utc-time"></div>
+
+    <!-- Events/Warnings Bar -->
+    <div class="events-bar" id="events-bar">
+        <div class="events-marquee"></div>
+    </div>
 
     <div style="display: flex; flex: 1; overflow: hidden;">
         <!-- Side Panel for Country Info -->
@@ -2877,8 +2931,16 @@
         const experimentalYes = document.getElementById('experimental-yes');
         const experimentalNo = document.getElementById('experimental-no');
 
+        const eventsBar = document.getElementById('events-bar');
+
         experimentalButton.addEventListener('click', () => {
-            experimentalModal.classList.add('visible');
+            // If already enabled, disable without popup
+            if (experimentalFeaturesEnabled) {
+                disableExperimentalFeatures();
+            } else {
+                // Show popup only when enabling
+                experimentalModal.classList.add('visible');
+            }
         });
 
         experimentalNo.addEventListener('click', () => {
@@ -2886,55 +2948,88 @@
         });
 
         experimentalYes.addEventListener('click', () => {
-            experimentalFeaturesEnabled = !experimentalFeaturesEnabled;
-            
-            if (experimentalFeaturesEnabled) {
-                // Show satellite toggle
-                satelliteToggle.style.display = 'flex';
-            } else {
-                // Hide satellite toggle and turn off satellite mode if active
-                satelliteToggle.style.display = 'none';
-                if (satelliteModeActive) {
-                    // Turn off satellite mode
-                    satelliteModeActive = false;
-                    satelliteSwitch.classList.remove('active');
-                    
-                    // Hide satellite imagery
-                    d3.selectAll('.satellite-bg')
-                        .transition()
-                        .duration(500)
-                        .attr("opacity", 0);
-                        
-                    if (oceanRect) {
-                        oceanRect.transition().duration(500).style("opacity", 1);
-                    }
-                    
-                    // Restore countries
-                    d3.selectAll('.country')
-                        .transition()
-                        .duration(500)
-                        .style("fill", function() {
-                            const d = d3.select(this).datum();
-                            if (d && d.properties && d.properties.name) {
-                                const name = d.properties.name;
-                                return terrainColors[name] || defaultTerrainColor;
-                            }
-                            return defaultTerrainColor;
-                        })
-                        .style("stroke", "#1a1d2e")
-                        .style("stroke-width", "0.5")
-                        .style("stroke-opacity", 1)
-                        .style("vector-effect", "");
-                    
-                    d3.selectAll('.country-label')
-                        .transition()
-                        .duration(500)
-                        .style("opacity", 0.8);
-                }
-            }
-            
+            enableExperimentalFeatures();
             experimentalModal.classList.remove('visible');
         });
+
+        function enableExperimentalFeatures() {
+            experimentalFeaturesEnabled = true;
+            // Show satellite toggle
+            satelliteToggle.style.display = 'flex';
+            // Show events bar
+            eventsBar.classList.add('visible');
+            // Fetch and display events
+            fetchGlobalEvents();
+        }
+
+        function disableExperimentalFeatures() {
+            experimentalFeaturesEnabled = false;
+            // Hide satellite toggle
+            satelliteToggle.style.display = 'none';
+            // Hide events bar
+            eventsBar.classList.remove('visible');
+            
+            // Turn off satellite mode if active
+            if (satelliteModeActive) {
+                satelliteModeActive = false;
+                satelliteSwitch.classList.remove('active');
+                
+                // Hide satellite imagery
+                d3.selectAll('.satellite-bg')
+                    .transition()
+                    .duration(500)
+                    .attr("opacity", 0);
+                    
+                if (oceanRect) {
+                    oceanRect.transition().duration(500).style("opacity", 1);
+                }
+                
+                // Restore countries
+                d3.selectAll('.country')
+                    .transition()
+                    .duration(500)
+                    .style("fill", function() {
+                        const d = d3.select(this).datum();
+                        if (d && d.properties && d.properties.name) {
+                            const name = d.properties.name;
+                            return terrainColors[name] || defaultTerrainColor;
+                        }
+                        return defaultTerrainColor;
+                    })
+                    .style("stroke", "#1a1d2e")
+                    .style("stroke-width", "0.5")
+                    .style("stroke-opacity", 1)
+                    .style("vector-effect", "");
+                
+                d3.selectAll('.country-label')
+                    .transition()
+                    .duration(500)
+                    .style("opacity", 0.8);
+            }
+        }
+
+        // Fetch global events, natural hazards, and weather warnings
+        async function fetchGlobalEvents() {
+            const eventsMarquee = document.querySelector('.events-marquee');
+            
+            // Sample events - in production, this would fetch from APIs like:
+            // - USGS Earthquake API
+            // - GDACS (Global Disaster Alert and Coordination System)
+            // - Weather Alert APIs
+            const sampleEvents = [
+                { icon: '🌋', text: 'Volcanic Activity - Mount Etna, Italy - Alert Level: Orange' },
+                { icon: '🌪️', text: 'Severe Weather Warning - Midwest USA - Tornado Watch in Effect' },
+                { icon: '🌊', text: 'Tsunami Advisory - Pacific Coast - Magnitude 6.8 Earthquake Detected' },
+                { icon: '⚠️', text: 'Heat Wave Alert - Southern Europe - Temperatures Exceeding 40°C' },
+                { icon: '🔥', text: 'Wildfire - California, USA - Evacuation Orders Active' },
+                { icon: '❄️', text: 'Winter Storm Warning - Northeast USA - Heavy Snow Expected' },
+                { icon: '🌀', text: 'Hurricane Watch - Caribbean Sea - Category 3 Storm Approaching' },
+            ];
+
+            eventsMarquee.innerHTML = sampleEvents.map(event => 
+                `<span class="event-item"><span class="event-icon">${event.icon}</span>${event.text}</span>`
+            ).join('');
+        }
 
         // Satellite mode toggle functionality
         let satelliteModeActive = false;
