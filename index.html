@@ -592,22 +592,32 @@
         }
 
         .history-button {
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.2);
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(220, 220, 220, 0.65) 0%, rgba(210, 210, 210, 0.55) 100%);
+            backdrop-filter: blur(25px) saturate(180%);
             border-radius: 50%;
             display: none;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            z-index: 999;
         }
 
         .history-button:hover {
             background: linear-gradient(135deg, rgba(230, 230, 230, 0.75) 0%, rgba(220, 220, 220, 0.65) 100%);
             transform: translateY(-2px);
-            box-shadow: 0 10px 36px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
         }
 
         .history-button:active {
@@ -626,6 +636,10 @@
         }
 
         body.retro-mode .info-panel {
+            display: none !important;
+        }
+
+        body.retro-mode .controls {
             display: none !important;
         }
 
@@ -1246,14 +1260,6 @@
                     </svg>
                 </button>
                 
-                <!-- History Button (V0.1.0 Mode) -->
-                <button class="history-button" id="history-button" title="Toggle V0.1.0 Classic View">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                </button>
-                
                 <!-- Satellite Mode Toggle -->
                 <div class="satellite-toggle" id="satellite-toggle" style="display: none;">
                     <span class="satellite-toggle-text">Satellite</span>
@@ -1264,6 +1270,14 @@
             </div>
         </div>
     </div>
+
+    <!-- History Button (V0.1.0 Mode) - Fixed Bottom Right -->
+    <button class="history-button" id="history-button" title="Toggle V0.1.0 Classic View">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+    </button>
 
     <!-- Experimental Features Modal -->
     <div class="experimental-modal" id="experimental-modal">
