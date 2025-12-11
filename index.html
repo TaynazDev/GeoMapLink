@@ -600,7 +600,7 @@
             background: linear-gradient(135deg, rgba(220, 220, 220, 0.65) 0%, rgba(210, 210, 210, 0.55) 100%);
             backdrop-filter: blur(25px) saturate(180%);
             border-radius: 50%;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -3265,8 +3265,6 @@
             experimentalFeaturesEnabled = true;
             // Show satellite toggle
             satelliteToggle.style.display = 'flex';
-            // Show history button
-            historyButton.style.display = 'flex';
             // Show events bar immediately with loading message
             eventsBar.classList.add('visible');
             showInitialEvents();
@@ -3296,11 +3294,10 @@
             experimentalFeaturesEnabled = false;
             // Hide satellite toggle
             satelliteToggle.style.display = 'none';
-            // Hide history button
-            historyButton.style.display = 'none';
             // Disable retro mode if active
             if (document.body.classList.contains('retro-mode')) {
                 document.body.classList.remove('retro-mode');
+                retroModeActive = false;
             }
             // Hide events bar
             eventsBar.classList.remove('visible');

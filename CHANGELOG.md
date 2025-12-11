@@ -5,36 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project aims to follow
 Semantic Versioning once releases begin.
 
-## [3.0.0-beta] - 2025-12-06
+## [3.0.0] - 2025-12-11
 
 ### Added
-- **Experimental Features System**: Major feature flag system for beta testing
+- **V0.1.0 Retro Mode**: Classic view toggle for nostalgia - always accessible
+  - History button permanently visible in bottom-right corner (clock icon)
+  - Purple gradient background matching original v0.1.0 design
+  - Simple white countries with purple hover states
+  - Instant popup cards when clicking countries (no transitions)
+  - Classic modal design with flag, country info (capital, population, area, languages, currency)
+  - Hides all modern UI elements (dock, panels, labels, events bar) when active
+- **Experimental Features System**: Advanced feature flag system
   - Real-time events/warnings bar with scrolling alerts from USGS & GDACS APIs
   - Live earthquake monitoring (magnitude 4.5+, last 24 hours)
   - Global disaster alerts (cyclones, floods, wildfires, volcanoes, etc.)
   - Comprehensive weather warnings with 25+ event type icons
   - Auto-refresh every 5 minutes with international data feeds
   - Continuous scrolling marquee (tripled content for seamless loop)
-- **V0.1.0 Retro Mode**: Classic view toggle for nostalgia
-  - History button in bottom-right corner (clock icon)
-  - Purple gradient background matching original v0.1.0 design
-  - Simple white countries with purple hover states
-  - Instant popup cards when clicking countries (no transitions)
-  - Classic modal design with flag, country info (capital, population, area, languages, currency)
-  - Hides all modern UI elements (dock, panels, labels, events bar)
-- **Enhanced Events Bar**: Massively expanded content and slower scroll speed
+- **Enhanced Events Bar**: Massively expanded content and optimized speed
   - Slowed animation to 150s (2.5 minutes for full loop) for better readability
   - Added 25+ diverse monitoring status messages
   - Lightning detection, tsunami warnings, volcanic activity surveillance
   - Tornado watch systems, temperature monitoring, wind speed tracking
   - Air quality monitoring, precipitation tracking, UV index updates
   - 16+ unique event types with smart icon detection
+  - Instant display with loading messages while API data loads
 
 ### Changed
-- **History Button Location**: Moved from dock to fixed bottom-right corner
+- **History Button**: Now always visible, independent of experimental features
   - 56x56px circular button with liquid glass styling
-  - Independent positioning allows it to persist when dock is hidden
-  - Shows/hides automatically with experimental features toggle
+  - Positioned fixed in bottom-right corner
+  - No longer requires experimental features to be enabled
 - **Events Bar Performance**: Optimized for continuous viewing
   - Increased event count from 5 to 8 per API source (16 total possible)
   - Content tripled to ensure no gaps in scrolling animation
@@ -46,10 +47,16 @@ Semantic Versioning once releases begin.
   - Auto-cleanup when switching between modes
 
 ### Fixed
+- **Critical Variable Hoisting Bug**: Resolved ReferenceError in experimental features
+  - Moved satelliteToggle, satelliteSwitch, and historyButton declarations before use
+  - Removed duplicate variable declarations causing scope issues
+  - Fixed bug that prevented experimental features from enabling properly
+  - All DOM element references now properly initialized at script start
 - **Mode Switching**: Clean transitions between modern and retro views
   - Side panel automatically hides when entering retro mode
   - Retro card automatically hides when returning to modern mode
   - Dock visibility properly toggled in retro mode
+  - Retro mode state properly resets when experimental features disabled
 
 ## [2.5.1] - 2025-11-29
 
