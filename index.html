@@ -3236,6 +3236,11 @@
         const experimentalNo = document.getElementById('experimental-no');
 
         const eventsBar = document.getElementById('events-bar');
+        const satelliteToggle = document.getElementById('satellite-toggle');
+        const satelliteSwitch = document.getElementById('satellite-switch');
+        const historyButton = document.getElementById('history-button');
+        let satelliteModeActive = false;
+        let retroModeActive = false;
 
         experimentalButton.addEventListener('click', () => {
             // If already enabled, disable without popup
@@ -3460,9 +3465,6 @@
         document.getElementById('retro-card-backdrop').addEventListener('click', hideRetroCard);
 
         // History button functionality (V0.1.0 retro mode)
-        const historyButton = document.getElementById('history-button');
-        let retroModeActive = false;
-
         historyButton.addEventListener('click', () => {
             retroModeActive = !retroModeActive;
             
@@ -3480,10 +3482,6 @@
         });
 
         // Satellite mode toggle functionality
-        let satelliteModeActive = false;
-        const satelliteToggle = document.getElementById('satellite-toggle');
-        const satelliteSwitch = document.getElementById('satellite-switch');
-
         satelliteToggle.addEventListener('click', () => {
             satelliteModeActive = !satelliteModeActive;
             satelliteSwitch.classList.toggle('active');
